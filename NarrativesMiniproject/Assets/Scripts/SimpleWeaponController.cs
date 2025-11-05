@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class SimpleWeaponController : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class SimpleWeaponController : MonoBehaviour
 
     GameObject currentWeapon;
     bool isSwinging;
+    WeaponHitbox weaponHitbox;
 
     void Start()
     {
@@ -33,9 +35,10 @@ public class SimpleWeaponController : MonoBehaviour
         if (currentWeapon) currentWeapon.SetActive(false);
         currentWeapon = newWeapon;
         currentWeapon.SetActive(true);
+        weaponHitbox = currentWeapon.GetComponent<WeaponHitbox>();
     }
 
-    System.Collections.IEnumerator SwingWeapon()
+    IEnumerator SwingWeapon()
     {
         isSwinging = true;
         Quaternion startRot = weaponHolder.localRotation;
@@ -46,6 +49,11 @@ public class SimpleWeaponController : MonoBehaviour
         {
             t += Time.deltaTime * swingSpeed;
             weaponHolder.localRotation = Quaternion.Slerp(startRot, downRot, Mathf.Sin(t * Mathf.PI));
+
+            // Hit detection near midpoint of swing (≈ half of curve)
+            if (t >= 0.45f && t <= 0.55f && weaponHitbox != null)
+                weaponHitbox.TryHit();
+
             yield return null;
         }
 
