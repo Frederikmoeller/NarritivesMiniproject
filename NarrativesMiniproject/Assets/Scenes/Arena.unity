@@ -191,6 +191,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -9009528380362784494, guid: 73fc3488243010c48843c198972d1180, type: 3}
+      propertyPath: m_AngularSpeed
+      value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: -9009528380362784494, guid: 73fc3488243010c48843c198972d1180, type: 3}
+      propertyPath: m_StoppingDistance
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 141435150592187663, guid: 73fc3488243010c48843c198972d1180, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 662051412785672039, guid: 73fc3488243010c48843c198972d1180, type: 3}
       propertyPath: partner
       value: 
@@ -327,6 +339,18 @@ PrefabInstance:
       propertyPath: partner
       value: 
       objectReference: {fileID: 878500095}
+    - target: {fileID: 675492886467260633, guid: 3b8ab6e871fce604f868a0eb40111eca, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2823953812945748076, guid: 3b8ab6e871fce604f868a0eb40111eca, type: 3}
+      propertyPath: m_AngularSpeed
+      value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: 2823953812945748076, guid: 3b8ab6e871fce604f868a0eb40111eca, type: 3}
+      propertyPath: m_StoppingDistance
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6121563198117294105, guid: 3b8ab6e871fce604f868a0eb40111eca, type: 3}
       propertyPath: m_Name
       value: Axe_Warrior_1 (1)
@@ -1471,6 +1495,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Axe_Warrior_3
       objectReference: {fileID: 0}
+    - target: {fileID: 5866809185010337679, guid: 1a75f11f69074b146bf85c5040f04cb0, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6949754070172728078, guid: 1a75f11f69074b146bf85c5040f04cb0, type: 3}
+      propertyPath: m_AngularSpeed
+      value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: 6949754070172728078, guid: 1a75f11f69074b146bf85c5040f04cb0, type: 3}
+      propertyPath: m_StoppingDistance
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1499,6 +1535,18 @@ PrefabInstance:
       propertyPath: partner
       value: 
       objectReference: {fileID: 326967997}
+    - target: {fileID: 675492886467260633, guid: 3b8ab6e871fce604f868a0eb40111eca, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2823953812945748076, guid: 3b8ab6e871fce604f868a0eb40111eca, type: 3}
+      propertyPath: m_AngularSpeed
+      value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: 2823953812945748076, guid: 3b8ab6e871fce604f868a0eb40111eca, type: 3}
+      propertyPath: m_StoppingDistance
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6121563198117294105, guid: 3b8ab6e871fce604f868a0eb40111eca, type: 3}
       propertyPath: m_Name
       value: Axe_Warrior_1
@@ -1611,10 +1659,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Axe_Warrior_2
       objectReference: {fileID: 0}
+    - target: {fileID: 2864830353449356703, guid: 5891485f1f429a14e87a01628842307d, type: 3}
+      propertyPath: m_AngularSpeed
+      value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: 2864830353449356703, guid: 5891485f1f429a14e87a01628842307d, type: 3}
+      propertyPath: m_StoppingDistance
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3926141721818936758, guid: 5891485f1f429a14e87a01628842307d, type: 3}
       propertyPath: partner
       value: 
       objectReference: {fileID: 1775502267}
+    - target: {fileID: 6189023500858380238, guid: 5891485f1f429a14e87a01628842307d, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1686,6 +1746,18 @@ PrefabInstance:
     - target: {fileID: 918993424903292751, guid: 1a75f11f69074b146bf85c5040f04cb0, type: 3}
       propertyPath: m_Name
       value: Axe_Warrior_3 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866809185010337679, guid: 1a75f11f69074b146bf85c5040f04cb0, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6949754070172728078, guid: 1a75f11f69074b146bf85c5040f04cb0, type: 3}
+      propertyPath: m_AngularSpeed
+      value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: 6949754070172728078, guid: 1a75f11f69074b146bf85c5040f04cb0, type: 3}
+      propertyPath: m_StoppingDistance
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1872,6 +1944,10 @@ PrefabInstance:
       propertyPath: partner
       value: 
       objectReference: {fileID: 1578109649}
+    - target: {fileID: 2390558901165181288, guid: f9d6a48488034e14f848e989e667164d, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8632508176750908178, guid: f9d6a48488034e14f848e989e667164d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 20.505161
@@ -1912,6 +1988,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8746364673505131858, guid: f9d6a48488034e14f848e989e667164d, type: 3}
+      propertyPath: m_AngularSpeed
+      value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: 8746364673505131858, guid: f9d6a48488034e14f848e989e667164d, type: 3}
+      propertyPath: m_StoppingDistance
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8973146141492562344, guid: f9d6a48488034e14f848e989e667164d, type: 3}
       propertyPath: m_Name
       value: Axe_Warrior_Complete_set
@@ -1947,6 +2031,18 @@ PrefabInstance:
     - target: {fileID: -9009528380362784494, guid: 73fc3488243010c48843c198972d1180, type: 3}
       propertyPath: m_AngularSpeed
       value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: -9009528380362784494, guid: 73fc3488243010c48843c198972d1180, type: 3}
+      propertyPath: m_StoppingDistance
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -915003597800148843, guid: 73fc3488243010c48843c198972d1180, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 141435150592187663, guid: 73fc3488243010c48843c198972d1180, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 662051412785672039, guid: 73fc3488243010c48843c198972d1180, type: 3}
       propertyPath: partner
@@ -2528,6 +2624,10 @@ PrefabInstance:
       propertyPath: partner
       value: 
       objectReference: {fileID: 1035361477}
+    - target: {fileID: 2390558901165181288, guid: f9d6a48488034e14f848e989e667164d, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8632508176750908178, guid: f9d6a48488034e14f848e989e667164d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 20.698
@@ -2567,6 +2667,14 @@ PrefabInstance:
     - target: {fileID: 8632508176750908178, guid: f9d6a48488034e14f848e989e667164d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8746364673505131858, guid: f9d6a48488034e14f848e989e667164d, type: 3}
+      propertyPath: m_AngularSpeed
+      value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: 8746364673505131858, guid: f9d6a48488034e14f848e989e667164d, type: 3}
+      propertyPath: m_StoppingDistance
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8973146141492562344, guid: f9d6a48488034e14f848e989e667164d, type: 3}
       propertyPath: m_Name
@@ -2640,10 +2748,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Axe_Warrior_2 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2864830353449356703, guid: 5891485f1f429a14e87a01628842307d, type: 3}
+      propertyPath: m_AngularSpeed
+      value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: 2864830353449356703, guid: 5891485f1f429a14e87a01628842307d, type: 3}
+      propertyPath: m_StoppingDistance
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3926141721818936758, guid: 5891485f1f429a14e87a01628842307d, type: 3}
       propertyPath: partner
       value: 
       objectReference: {fileID: 936167706}
+    - target: {fileID: 6189023500858380238, guid: 5891485f1f429a14e87a01628842307d, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
