@@ -96,6 +96,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: -6971974001446753631, guid: 26884749826e6774aa58a039de667f50, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -6757893717303744706, guid: 26884749826e6774aa58a039de667f50, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -143,6 +147,10 @@ PrefabInstance:
     - target: {fileID: -5173413271129417113, guid: 26884749826e6774aa58a039de667f50, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5082540206272475131, guid: 26884749826e6774aa58a039de667f50, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -4403734598874310488, guid: 26884749826e6774aa58a039de667f50, type: 3}
       propertyPath: m_Layer
@@ -252,6 +260,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: -1345602428052219501, guid: 26884749826e6774aa58a039de667f50, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -1225692525079674358, guid: 26884749826e6774aa58a039de667f50, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -352,6 +364,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 1113048391109896303, guid: 26884749826e6774aa58a039de667f50, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1219391018250232636, guid: 26884749826e6774aa58a039de667f50, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -388,11 +404,19 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 1832509924036948395, guid: 26884749826e6774aa58a039de667f50, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2230474343273928019, guid: 26884749826e6774aa58a039de667f50, type: 3}
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2236237030686087061, guid: 26884749826e6774aa58a039de667f50, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2256741168989961654, guid: 26884749826e6774aa58a039de667f50, type: 3}
       propertyPath: m_UpdateWhenOffscreen
       value: 1
       objectReference: {fileID: 0}
@@ -520,6 +544,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 4857048565702577327, guid: 26884749826e6774aa58a039de667f50, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4884641684671932949, guid: 26884749826e6774aa58a039de667f50, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -628,6 +656,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 7267266721587747019, guid: 26884749826e6774aa58a039de667f50, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7355426222476292021, guid: 26884749826e6774aa58a039de667f50, type: 3}
       propertyPath: m_Layer
       value: 6
@@ -656,9 +688,17 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 8409271659926349514, guid: 26884749826e6774aa58a039de667f50, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8584418155959005227, guid: 26884749826e6774aa58a039de667f50, type: 3}
       propertyPath: m_Layer
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8602637338977173543, guid: 26884749826e6774aa58a039de667f50, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8858575434003239941, guid: 26884749826e6774aa58a039de667f50, type: 3}
       propertyPath: m_Layer
