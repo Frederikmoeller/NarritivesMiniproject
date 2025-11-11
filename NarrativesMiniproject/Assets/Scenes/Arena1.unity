@@ -422,7 +422,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -9009528380362784494, guid: 73fc3488243010c48843c198972d1180, type: 3}
       propertyPath: m_BaseOffset
-      value: 0.05
+      value: 0.03
       objectReference: {fileID: 0}
     - target: {fileID: -9009528380362784494, guid: 73fc3488243010c48843c198972d1180, type: 3}
       propertyPath: m_AngularSpeed
@@ -450,7 +450,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6275298039375644533, guid: 73fc3488243010c48843c198972d1180, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 134.69814
+      value: 134.682
       objectReference: {fileID: 0}
     - target: {fileID: 6275298039375644533, guid: 73fc3488243010c48843c198972d1180, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1949,7 +1949,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2144405042924985595, guid: d28b2081cbeb6c249a4f5053a322a619, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 579745098}
+    - targetCorrespondingSourceObject: {fileID: 2144405042924985595, guid: d28b2081cbeb6c249a4f5053a322a619, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 579745099}
   m_SourcePrefab: {fileID: 100100000, guid: d28b2081cbeb6c249a4f5053a322a619, type: 3}
 --- !u!4 &533131479 stripped
 Transform:
@@ -1961,6 +1967,36 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2144405042924985595, guid: d28b2081cbeb6c249a4f5053a322a619, type: 3}
   m_PrefabInstance: {fileID: 533131478}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &579745098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 579745097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5939db5b7d13f8a4698cbe4b2a7ed453, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  healAmount: 34
+--- !u!114 &579745099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 579745097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0233c282aa46ffc48b955e29956cef14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 0
+  isHealingTool: 1
+  healAmount: 34
+  debugLogs: 1
+  debugHitRadius: 1
 --- !u!1001 &650334981
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2051,9 +2087,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 25
-  hitMask:
-    serializedVersion: 2
-    m_Bits: 64
+  isHealingTool: 0
+  healAmount: 34
+  debugLogs: 1
+  debugHitRadius: 1
 --- !u!1001 &672268699
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3405,6 +3442,7 @@ MonoBehaviour:
   stethoscope: {fileID: 579745097}
   swingSpeed: 8
   swingAngle: 90
+  debugLogs: 1
 --- !u!1001 &1151315390
 PrefabInstance:
   m_ObjectHideFlags: 0

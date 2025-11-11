@@ -9,6 +9,9 @@ public class SimpleWeaponController : MonoBehaviour
     public float swingSpeed = 8f;
     public float swingAngle = 45f;
 
+    [Header("Debug")]
+    public bool debugLogs = true;
+
     GameObject currentWeapon;
     bool isSwinging;
     WeaponHitbox weaponHitbox;
@@ -23,11 +26,8 @@ public class SimpleWeaponController : MonoBehaviour
         if (Input.GetMouseButtonDown(0) && !isSwinging)
             StartCoroutine(SwingWeapon());
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            EquipWeapon(axe);
-
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-            EquipWeapon(stethoscope);
+        if (Input.GetKeyDown(KeyCode.Alpha1)) EquipWeapon(axe);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) EquipWeapon(stethoscope);
     }
 
     void EquipWeapon(GameObject newWeapon)
@@ -36,6 +36,11 @@ public class SimpleWeaponController : MonoBehaviour
         currentWeapon = newWeapon;
         currentWeapon.SetActive(true);
         weaponHitbox = currentWeapon.GetComponent<WeaponHitbox>();
+
+        if (weaponHitbox == null)
+            Debug.LogError($"[WeaponController] '{currentWeapon.name}' is missing WeaponHitbox. Add it and set isHealingTool accordingly.");
+        else if (debugLogs)
+            Debug.Log($"[WeaponController] Equipped '{currentWeapon.name}' | healing={weaponHitbox.isHealingTool}");
     }
 
     IEnumerator SwingWeapon()
@@ -50,9 +55,11 @@ public class SimpleWeaponController : MonoBehaviour
             t += Time.deltaTime * swingSpeed;
             weaponHolder.localRotation = Quaternion.Slerp(startRot, downRot, Mathf.Sin(t * Mathf.PI));
 
-            // Hit detection near midpoint of swing (≈ half of curve)
             if (t >= 0.45f && t <= 0.55f && weaponHitbox != null)
+            {
+                if (debugLogs) Debug.Log($"[WeaponController] Swing midpoint -> TryHit() on '{currentWeapon.name}'");
                 weaponHitbox.TryHit();
+            }
 
             yield return null;
         }
