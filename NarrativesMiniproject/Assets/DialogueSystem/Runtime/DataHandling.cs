@@ -7,6 +7,8 @@ namespace DialogueSystem
 [Serializable]
 public class DialogueLine
 {
+    public string guid;           // unique ID for editor/serialization use
+    public Vector2 position;      // editor position (not used at runtime except for saving)
     public string speakerId;
     public string textKey;
     public DialogueChoice[] choices;
