@@ -13,6 +13,7 @@ namespace DialogueSystem.Editor
     {
         private DialogueGraphView _graphView;
         private string _currentAssetPath;
+        public DialogueAsset CurrentAsset => _loadedAsset;
         private DialogueAsset _loadedAsset;
         private VisualElement _toolbarContainer;
 

@@ -37,11 +37,4 @@ public class DialogueLine
         public string id;
         public string[] args;
     }
-
-    [CreateAssetMenu(fileName="DialogueAsset")]
-    public class DialogueAsset : ScriptableObject {
-        public List<DialogueLine> nodes;
-        public string startNodeId;
-    }
-    
 }

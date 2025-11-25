@@ -60,6 +60,7 @@ namespace DialogueSystem.Editor
             speakerField.RegisterValueChangedCallback(evt =>
             {
                 NodeData.speakerId = evt.newValue;
+                UpdateNodeTitle();
             });
             mainContainer.Add(speakerField);
 
@@ -70,33 +71,16 @@ namespace DialogueSystem.Editor
             textKeyField.RegisterValueChangedCallback(evt =>
             {
                 NodeData.textKey = evt.newValue;
-                title = string.IsNullOrEmpty(NodeData.textKey) ? "New Node" : NodeData.textKey;
+                UpdateNodeTitle();
             });
             mainContainer.Add(textKeyField);
 
-            // Mode toggle explanation (Yarn-style only one allowed)
-            var modeHelp = new Label("Yarn-style: node may have EITHER Next OR Choices.");
-            modeHelp.style.unityFontStyleAndWeight = FontStyle.Italic;
-            mainContainer.Add(modeHelp);
-
             // Next vs Choices toggle area
-            var modeContainer = new VisualElement { style = { flexDirection = FlexDirection.Row } };
-            var nextToggle = new Button(() => SwitchToNextMode()) { text = "Use Next (linear)" };
-            var choicesToggle = new Button(() => SwitchToChoiceMode()) { text = "Use Choices (branching)" };
-            modeContainer.Add(nextToggle);
-            modeContainer.Add(choicesToggle);
-            mainContainer.Add(modeContainer);
-
-            // Next target label + dropdown (serialized)
-            var nextTargetField = new TextField("Next Target GUID")
+            var addChoiceBtn = new Button(() =>
             {
-                value = NodeData.nextNodeId
-            };
-            nextTargetField.RegisterValueChangedCallback(evt =>
-            {
-                NodeData.nextNodeId = evt.newValue;
-            });
-            mainContainer.Add(nextTargetField);
+                AddChoice(); // your existing AddChoice() method
+            }) { text = "Add Choice" };
+            mainContainer.Add(addChoiceBtn);
 
             // Choices container
             _choicesContainer = new VisualElement();
@@ -112,57 +96,43 @@ namespace DialogueSystem.Editor
             RefreshModeUI();
         }
 
+        void UpdateNodeTitle()
+        {
+            string key = string.IsNullOrEmpty(NodeData.textKey) ? "New Node" : NodeData.textKey;
+            string speaker = string.IsNullOrEmpty(NodeData.speakerId) ? "" : $"{NodeData.speakerId}: ";
+            title = speaker + key;
+        }
+        
         private void RefreshModeUI()
         {
-            // 1. Remove old next port if exists
-            if (_nextPort != null)
-                outputContainer.Remove(_nextPort);
+            outputContainer.Clear();
 
-            // 2. Remove old choice ports
-            foreach (var p in _choicePorts)
-                outputContainer.Remove(p);
-
-            _choicePorts.Clear();
-            _choicesContainer.Clear();
-
-            // 3. Choice mode ON
             if (_isChoiceMode)
             {
-                // Create a "disabled" next port (visual only, no connections allowed)
-                _nextPort = InstantiatePort(
-                    Orientation.Horizontal,
-                    Direction.Output,
-                    Port.Capacity.Single,  // still single, but we won't hook it up
-                    typeof(bool)
-                );
-                _nextPort.portName = "Next (disabled)";
-                _nextPort.SetEnabled(false); /// VISUALLY DISABLE
+                // Remove Next port
+                _nextPort = null;
 
-                outputContainer.Add(_nextPort);
-
-                // Create choice ports
+                // Add choice ports
+                _choicePorts.Clear();
+                _choicesContainer.Clear();
                 for (int i = 0; i < NodeData.choices.Length; i++)
                 {
                     AddChoiceUI(i);
 
-                    var cp = InstantiatePort(
-                        Orientation.Horizontal,
-                        Direction.Output,
-                        Port.Capacity.Single,
-                        typeof(bool)
-                    );
+                    var cp = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
                     cp.portName = $"Choice {i}";
-
                     _choicePorts.Add(cp);
                     outputContainer.Add(cp);
                 }
             }
             else
             {
-                // 4. Choice mode OFF - only one next port
-                _nextPort = CreateNextPort(Orientation.Horizontal);
-                _nextPort.portName = "Next";
-
+                // No choices, restore Next port
+                if (_nextPort == null)
+                {
+                    _nextPort = CreateNextPort(Orientation.Horizontal);
+                    _nextPort.portName = "Next";
+                }
                 outputContainer.Add(_nextPort);
             }
 
@@ -362,32 +332,36 @@ namespace DialogueSystem.Editor
             var list = NodeData.choices.ToList();
             list.RemoveAt(index);
             NodeData.choices = list.ToArray();
+            // If all choices removed, restore next port
+            if (NodeData.choices.Length == 0 && _nextPort == null)
+            {
+                _nextPort = CreateNextPort(Orientation.Horizontal);
+                _nextPort.portName = "Next";
+            }
             RefreshModeUI();
         }
-
-        private void SwitchToChoiceMode()
-        {
-            if (_isChoiceMode) return;
-            // convert nextNodeId -> single default choice if desired, or clear it.
-            NodeData.choices = new DialogueChoice[0];
-            NodeData.nextNodeId = null;
-            RefreshModeUI();
-        }
-
-        private void SwitchToNextMode()
-        {
-            if (!_isChoiceMode) return;
-            // convert choices into a single linear continuation? we'll simply clear choices
-            NodeData.choices = new DialogueChoice[0];
-            RefreshModeUI();
-        }
-
         public void AddChoice()
         {
             var list = (NodeData.choices ?? new DialogueChoice[0]).ToList();
             list.Add(new DialogueChoice { textKey = "choice", nextNodeId = "" , Conditions = new Condition[0], actions = new ActionEvent[0]});
             NodeData.choices = list.ToArray();
+            // Remove next port if this is the first choice
+            if (_nextPort != null)
+            {
+                outputContainer.Remove(_nextPort);
+                _nextPort = null;
+            }
             RefreshModeUI();
+        }
+        
+        public int GetChoicePortIndex(Port port)
+        {
+            for (int i = 0; i < _choicePorts.Count; i++)
+            {
+                if (_choicePorts[i] == port)
+                    return i;
+            }
+            return -1;
         }
         #endregion
     }

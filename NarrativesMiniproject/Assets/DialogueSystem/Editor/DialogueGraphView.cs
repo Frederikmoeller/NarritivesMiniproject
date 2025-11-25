@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -10,28 +11,40 @@ namespace DialogueSystem.Editor
     {
         private DialogueGraphEditor _editorWindow;
         private MiniMap _miniMap;
+        private EdgeConnector<Edge> _edgeConnector;
 
         public DialogueGraphView(DialogueGraphEditor editorWindow)
-        {
-            _editorWindow = editorWindow;
-            
-            //styleSheets.Add(Resources.Load<StyleSheet>("DialogueGraphStyle"));
-            
-            SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
-            this.AddManipulator(new ContentDragger());
-            this.AddManipulator(new SelectionDragger());
-            this.AddManipulator(new RectangleSelector());
-            this.AddManipulator(new ContentZoomer());
+            {
+                _editorWindow = editorWindow;
 
-            var grid = new GridBackground();
-            Insert(0, grid);
-            grid.StretchToParentSize();
-            
-            AddElement(GenerateEntryPointNode());
-            
-            this.AddManipulator(new ContextualMenuManipulator(evt => BuildContextualMenu(evt)));
-            
-            RegisterCallback<DragPerformEvent>(OnDragPerform);
+                SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
+                this.AddManipulator(new ContentDragger());
+                this.AddManipulator(new SelectionDragger());
+                this.AddManipulator(new RectangleSelector());
+
+                // EdgeConnector for drag & connect
+                _edgeConnector = new EdgeConnector<Edge>(new DialogueEdgeConnectorListener(this));
+                this.AddManipulator(_edgeConnector);
+
+                var grid = new GridBackground();
+                Insert(0, grid);
+                grid.StretchToParentSize();
+                graphViewChanged = OnGraphViewChanged;
+            }
+        
+        // <<< Critical for making ports connectable >>>
+        public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
+        {
+            var compatiblePorts = new List<Port>();
+
+            foreach (var port in ports)
+            {
+                if (port == startPort) continue;                     // cannot connect to itself
+                if (port.direction == startPort.direction) continue; // must be opposite direction
+                compatiblePorts.Add(port);
+            }
+
+            return compatiblePorts;
         }
         
         private void OnDragPerform(DragPerformEvent evt)
@@ -39,8 +52,9 @@ namespace DialogueSystem.Editor
             // Future support for drag & drop
         }
         
-        private void BuildContextualMenu(ContextualMenuPopulateEvent evt)
+        public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
+            base.BuildContextualMenu(evt);
             evt.menu.AppendAction("Create Node", a => CreateNodeAtPosition(evt.localMousePosition));
         }
 
@@ -54,15 +68,18 @@ namespace DialogueSystem.Editor
 
         public void LoadFromAsset(DialogueAsset asset)
         {
-            graphElements.ForEach(e => RemoveElement(e));
+            graphElements.ForEach(RemoveElement);
             AddElement(GenerateEntryPointNode());
             
             // Create node views for each DialogueLine
-            foreach (var node in asset.nodes)
+            if (asset.nodes != null)
             {
-                var nv = new DialogueNodeView(node);
-                nv.SetPosition(new Rect(node.position, new Vector2(200, 150)));
-                AddElement(nv);
+                foreach (var node in asset.nodes)
+                {
+                    var nv = new DialogueNodeView(node);
+                    nv.SetPosition(new Rect(node.position, new Vector2(200, 150)));
+                    AddElement(nv);
+                }
             }
             
             // Recreate connections based on nextNodeId and choices
@@ -116,7 +133,7 @@ namespace DialogueSystem.Editor
 
         public void ClearGraph()
         {
-            graphElements.ForEach(e => RemoveElement(e));
+            graphElements.ForEach(RemoveElement);
             AddElement(GenerateEntryPointNode());
         }
 
@@ -140,7 +157,69 @@ namespace DialogueSystem.Editor
             entry.RefreshPorts();
             return entry;
         }
+        
+        public GraphViewChange OnGraphViewChanged(GraphViewChange change) 
+        {
+            // Handle newly created edges
+            if (change.edgesToCreate != null)
+            {
+                foreach (var edge in change.edgesToCreate)
+                {
+                    var outNode = edge.output.node as DialogueNodeView;
+                    var inNode = edge.input.node as DialogueNodeView;
 
+                    if (outNode == null || inNode == null)
+                        continue;
+
+                    // Determine if it's the main Next port
+                    if (edge.output == outNode.GetNextPort())
+                    {
+                        outNode.NodeData.nextNodeId = inNode.NodeData.guid;
+                        Debug.Log($"Set nextNodeId for {outNode.NodeData.guid} -> {inNode.NodeData.guid}");
+                    }
+                    else
+                    {
+                        // Otherwise, it's a choice port
+                        int choiceIndex = outNode.GetChoicePortIndex(edge.output);
+                        if (choiceIndex >= 0)
+                        {
+                            outNode.NodeData.choices[choiceIndex].nextNodeId = inNode.NodeData.guid;
+                            Debug.Log($"Set choice {choiceIndex} nextNodeId for {outNode.NodeData.guid} -> {inNode.NodeData.guid}");
+                        }
+                    }
+
+                    // Optional: store edge userData for debugging
+                    edge.userData = new { from = outNode.NodeData.guid, to = inNode.NodeData.guid };
+                }
+            }
+
+            // Handle edge removal similarly
+            if (change.elementsToRemove != null)
+            {
+                foreach (var element in change.elementsToRemove)
+                {
+                    if (element is Edge edge)
+                    {
+                        var outNode = edge.output.node as DialogueNodeView;
+                        if (outNode == null) continue;
+
+                        if (edge.output == outNode.GetNextPort())
+                            outNode.NodeData.nextNodeId = null;
+                        else
+                        {
+                            int idx = outNode.GetChoicePortIndex(edge.output);
+                            if (idx >= 0)
+                                outNode.NodeData.choices[idx].nextNodeId = null;
+                        }
+                    }
+                }
+            }
+            EditorUtility.SetDirty(_editorWindow.CurrentAsset);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            return change;
+        }
+        
         public void ToggleMinimap()
         {
             if (_miniMap == null)
