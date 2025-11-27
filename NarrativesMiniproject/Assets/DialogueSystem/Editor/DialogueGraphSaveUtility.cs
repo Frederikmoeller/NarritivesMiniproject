@@ -45,16 +45,14 @@ namespace DialogueSystem.Editor
             var nodeViews = graphView.nodes.ToList().OfType<DialogueNodeView>().ToList();
             var lines = new List<DialogueLine>();
 
-            // Find start node and set entry point
-            var startNode = graphView.nodes.ToList().FirstOrDefault(n => n is StartNodeView) as StartNodeView;
-            if (startNode != null && startNode.GetOutputPort().connections.Any())
+            // Find start node and save its connection
+            if (graphView.nodes.ToList().FirstOrDefault(n => n is StartNodeView) is StartNodeView startNode)
             {
-                var firstEdge = startNode.GetOutputPort().connections.First();
-                var targetNode = firstEdge.input.node as DialogueNodeView;
-                if (targetNode != null)
-                {
-                    asset.startNodeId = targetNode.NodeData.guid;
-                }
+                asset.startNodeId = startNode.StartNodeId;
+            }
+            else
+            {
+                asset.startNodeId = null; // No start node or no connection
             }
 
             foreach (var nv in nodeViews)

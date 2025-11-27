@@ -44,6 +44,10 @@ namespace DialogueSystem.Editor
             _nextPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
             _nextPort.portName = "Next";
             outputContainer.Add(_nextPort);
+    
+            // Register with edge connector
+            if (_graphView != null)
+                _graphView.RegisterPortToEdgeConnector(_nextPort);
         }
 
         public Port GetInputPort() => _inputPort;
@@ -143,7 +147,13 @@ namespace DialogueSystem.Editor
                 while (_choicePorts.Count < NodeData.choices.Length)
                 {
                     var cp = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
+                    cp.portName = $"Choice {_choicePorts.Count}";
                     _choicePorts.Add(cp);
+                    outputContainer.Add(cp);
+
+                    // Register with edge connector
+                    if (_graphView != null)
+                        _graphView.RegisterPortToEdgeConnector(cp);
                 }
         
                 // Remove excess choice ports

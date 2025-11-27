@@ -13,30 +13,28 @@ MonoBehaviour:
   m_Name: NewDialogue
   m_EditorClassIdentifier: 
   nodes:
+  - guid: 3cf898a1-f654-4e84-a6bf-349a43ffacec
+    position: {x: 211, y: -3}
+    speakerId: Lanista
+    textKey: choose_your_tool
+    choices: []
+    nextNodeId: 00d17558-98c6-459f-99e4-68edfaa08f15
   - guid: 00d17558-98c6-459f-99e4-68edfaa08f15
-    position: {x: 729, y: -168}
+    position: {x: 501, y: -3}
     speakerId: Lanista
     textKey: axe_choice_1
     choices: []
-    nextNodeId: 
-  - guid: 3cf898a1-f654-4e84-a6bf-349a43ffacec
-    position: {x: 206, y: -142}
-    speakerId: Lanista
-    textKey: choose_your_tool
-    choices:
-    - textKey: choice
-      nextNodeId: 00d17558-98c6-459f-99e4-68edfaa08f15
-      Conditions: []
-      actions: []
-    - textKey: choice
-      nextNodeId: 657cc9b6-2fc1-4abb-aa97-6c177e7d3036
-      Conditions: []
-      actions: []
-    nextNodeId: 
+    nextNodeId: 657cc9b6-2fc1-4abb-aa97-6c177e7d3036
   - guid: 657cc9b6-2fc1-4abb-aa97-6c177e7d3036
-    position: {x: 759, y: -1}
+    position: {x: 764, y: -3}
     speakerId: 
     textKey: 
     choices: []
-    nextNodeId: 
+    nextNodeId: e12925e6-598e-44fc-bd6a-c82f4c42ecb8
+  - guid: e12925e6-598e-44fc-bd6a-c82f4c42ecb8
+    position: {x: 1006, y: -3}
+    speakerId: 
+    textKey: 
+    choices: []
+    nextNodeId: 0c28874e-74e3-431d-88a9-294219f9db16
   startNodeId: 3cf898a1-f654-4e84-a6bf-349a43ffacec
