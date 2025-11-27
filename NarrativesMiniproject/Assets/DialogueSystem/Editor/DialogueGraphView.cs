@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -61,61 +62,80 @@ namespace DialogueSystem.Editor
         public void CreateNodeAtPosition(Vector2 position)
         {
             var nodeData = DialogueGraphSaveUtility.CreateDialogueLine();
-            var nodeView = new DialogueNodeView(nodeData);
+            var nodeView = new DialogueNodeView(nodeData, this);
             nodeView.SetPosition(new Rect(position, new Vector2(200, 150)));
             AddElement(nodeView);
         }
 
         public void LoadFromAsset(DialogueAsset asset)
         {
-            graphElements.ForEach(RemoveElement);
-            AddElement(GenerateEntryPointNode());
-            
-            // Create node views for each DialogueLine
-            if (asset.nodes != null)
+        graphElements.ForEach(RemoveElement);
+        AddElement(GenerateEntryPointNode());
+    
+        // Create node views for each DialogueLine
+        if (asset.nodes != null)
+        {
+            foreach (var node in asset.nodes)
             {
-                foreach (var node in asset.nodes)
-                {
-                    var nv = new DialogueNodeView(node);
-                    nv.SetPosition(new Rect(node.position, new Vector2(200, 150)));
-                    AddElement(nv);
-                }
+                var nv = new DialogueNodeView(node, this);
+                nv.SetPosition(new Rect(node.position, new Vector2(200, 150)));
+                AddElement(nv);
             }
-            
-            // Recreate connections based on nextNodeId and choices
-            var nodeViews = this.nodes;
+        }
+    
+        // Wait one frame for all nodes to be fully initialized
+        EditorApplication.delayCall += () => ReconnectEdges(asset);
+        }
+
+        private void ReconnectEdges(DialogueAsset asset)
+        {
+            if (asset == null) return;
+    
+            var nodeViews = this.nodes.ToList().Where(n => n is DialogueNodeView).Cast<DialogueNodeView>().ToList();
+    
             foreach (var nv in nodeViews)
             {
-                var view = nv as DialogueNodeView;
-                if (view == null) continue;
-                
                 // Next node edge
-                if (!string.IsNullOrEmpty(view.NodeData.nextNodeId))
+                if (!string.IsNullOrEmpty(nv.NodeData.nextNodeId))
                 {
-                    var targetNode = FindNodeViewByGuid(view.NodeData.nextNodeId);
-                    if (targetNode != null)
+                    var targetNode = FindNodeViewByGuid(nv.NodeData.nextNodeId);
+                    if (targetNode != null && nv.GetNextPort() != null)
                     {
-                        CreateEdge(view.GetNextPort(), targetNode.GetInputPort());
+                        CreateEdge(nv.GetNextPort(), targetNode.GetInputPort());
                     }
-                    
-                    // Choices edges
-                    for (int i = 0; i < view.NodeData.choices?.Length; i++)
+                }
+        
+                // Choices edges - FIXED: Check choices array properly and ensure ports exist
+                if (nv.NodeData.choices != null)
+                {
+                    for (int i = 0; i < nv.NodeData.choices.Length; i++)
                     {
-                        var choiceTargetGuid = view.NodeData.choices[i].nextNodeId;
-                        if (!string.IsNullOrEmpty(choiceTargetGuid))
+                        var choice = nv.NodeData.choices[i];
+                        if (!string.IsNullOrEmpty(choice.nextNodeId))
                         {
-                            var target = FindNodeViewByGuid(choiceTargetGuid);
+                            var target = FindNodeViewByGuid(choice.nextNodeId);
                             if (target != null)
                             {
-                                var choicePort = view.GetChoicePort(i);
-                                if (choicePort != null)
-                                {
-                                    CreateEdge(choicePort, target.GetInputPort());
-                                }
+                                // Wait a bit more for choice ports to be fully created
+                                EditorApplication.delayCall += () => ConnectChoiceEdge(nv, i, target);
                             }
                         }
                     }
                 }
+            }
+        }
+
+        private void ConnectChoiceEdge(DialogueNodeView sourceNode, int choiceIndex, DialogueNodeView targetNode)
+        {
+            var choicePort = sourceNode.GetChoicePort(choiceIndex);
+            if (choicePort != null && targetNode.GetInputPort() != null)
+            {
+                CreateEdge(choicePort, targetNode.GetInputPort());
+            }
+            else
+            {
+                // If ports aren't ready yet, try one more time
+                EditorApplication.delayCall += () => ConnectChoiceEdge(sourceNode, choiceIndex, targetNode);
             }
         }
 
@@ -146,15 +166,8 @@ namespace DialogueSystem.Editor
 
         private Node GenerateEntryPointNode()
         {
-            var entry = new Node { title = "START" };
+            var entry = new StartNodeView();
             entry.SetPosition(new Rect(10, 10, 150, 50));
-            entry.capabilities &= ~Capabilities.Movable;
-            var outPort = entry.InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single,
-                typeof(bool));
-            outPort.portName = "Next";
-            entry.outputContainer.Add(outPort);
-            entry.RefreshExpandedState();
-            entry.RefreshPorts();
             return entry;
         }
         
@@ -234,5 +247,29 @@ namespace DialogueSystem.Editor
                 _miniMap = null;
             }
         }
+    }
+    public class StartNodeView : Node
+    {
+        public string StartNodeId { get; set; }
+        private Port _outputPort;
+
+        public StartNodeView()
+        {
+            title = "START";
+            viewDataKey = "START_NODE";
+            StartNodeId = "";
+        
+            capabilities &= ~Capabilities.Movable;
+            capabilities &= ~Capabilities.Deletable;
+        
+            _outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
+            _outputPort.portName = "Next";
+            outputContainer.Add(_outputPort);
+        
+            RefreshExpandedState();
+            RefreshPorts();
+        }
+
+        public Port GetOutputPort() => _outputPort;
     }
 }

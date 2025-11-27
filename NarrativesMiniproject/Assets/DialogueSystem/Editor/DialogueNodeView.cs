@@ -13,16 +13,17 @@ namespace DialogueSystem.Editor
     public class DialogueNodeView : Node
     {
         public DialogueLine NodeData { get; private set; }
+        private DialogueGraphView _graphView;
 
         private Port _inputPort;
         private Port _nextPort;
         private List<Port> _choicePorts = new List<Port>();
         private VisualElement _choicesContainer;
         private VisualElement _conditionActionContainer;
-        private bool _isChoiceMode => NodeData.choices != null && NodeData.choices.Length > 0;
 
-        public DialogueNodeView(DialogueLine data)
+        public DialogueNodeView(DialogueLine data, DialogueGraphView graphView = null)
         {
+            _graphView = graphView;
             NodeData = data ?? DialogueGraphSaveUtility.CreateDialogueLine();
             title = string.IsNullOrEmpty(NodeData.textKey) ? "New Node" : NodeData.textKey;
             viewDataKey = NodeData.guid;
@@ -76,10 +77,7 @@ namespace DialogueSystem.Editor
             mainContainer.Add(textKeyField);
 
             // Next vs Choices toggle area
-            var addChoiceBtn = new Button(() =>
-            {
-                AddChoice(); // your existing AddChoice() method
-            }) { text = "Add Choice" };
+            var addChoiceBtn = new Button(AddChoice) { text = "Add Choice" };
             mainContainer.Add(addChoiceBtn);
 
             // Choices container
@@ -105,32 +103,72 @@ namespace DialogueSystem.Editor
         
         private void RefreshModeUI()
         {
+            // Collect edges that will be disconnected before changing ports
+            var edgesToRemove = new List<Edge>();
+    
+            if (NodeData.choices.Length > 0 && _nextPort != null)
+            {
+                edgesToRemove.AddRange(_nextPort.connections);
+                // Clear the nextNodeId since we're switching to choice mode
+                if (!string.IsNullOrEmpty(NodeData.nextNodeId))
+                {
+                    Debug.Log($"Clearing nextNodeId '{NodeData.nextNodeId}' when switching to choice mode");
+                    NodeData.nextNodeId = null;
+                }
+            }
+    
+            // 2. Remove edges from any choice ports that will be removed
+            // This covers both reducing choice count AND switching to next port mode (where choices.Length == 0)
+            for (int i = NodeData.choices.Length; i < _choicePorts.Count; i++)
+            {
+                edgesToRemove.AddRange(_choicePorts[i].connections);
+            }
+            
+            // Always clear and rebuild choices UI
+            _choicesContainer.Clear();
+            for (int i = 0; i < NodeData.choices.Length; i++)
+            {
+                AddChoiceUI(i);
+            }
+
+            // Clear output container and rebuild based on choices count
             outputContainer.Clear();
 
-            if (_isChoiceMode)
+            if (NodeData.choices.Length > 0)
             {
-                // Remove Next port
-                _nextPort = null;
-
-                // Add choice ports
-                _choicePorts.Clear();
-                _choicesContainer.Clear();
-                for (int i = 0; i < NodeData.choices.Length; i++)
+                // CHOICE MODE: Create choice ports
+                _nextPort = null; // Clear next port in choice mode
+        
+                // Ensure we have the right number of choice ports
+                while (_choicePorts.Count < NodeData.choices.Length)
                 {
-                    AddChoiceUI(i);
-
                     var cp = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
-                    cp.portName = $"Choice {i}";
                     _choicePorts.Add(cp);
-                    outputContainer.Add(cp);
+                }
+        
+                // Remove excess choice ports
+                while (_choicePorts.Count > NodeData.choices.Length)
+                {
+                    _choicePorts.RemoveAt(_choicePorts.Count - 1);
+                }
+        
+                // Add current choice ports to output container with choice key as name
+                for (int i = 0; i < _choicePorts.Count; i++)
+                {
+                    var choice = NodeData.choices[i];
+                    var portName = string.IsNullOrEmpty(choice.textKey) ? $"Choice {i}" : choice.textKey;
+                    _choicePorts[i].portName = portName;
+                    outputContainer.Add(_choicePorts[i]);
                 }
             }
             else
             {
-                // No choices, restore Next port
+                // NEXT PORT MODE: Use single next port
+                _choicePorts.Clear(); // Clear all choice ports
+        
                 if (_nextPort == null)
                 {
-                    _nextPort = CreateNextPort(Orientation.Horizontal);
+                    _nextPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
                     _nextPort.portName = "Next";
                 }
                 outputContainer.Add(_nextPort);
@@ -138,8 +176,40 @@ namespace DialogueSystem.Editor
 
             RefreshExpandedState();
             RefreshPorts();
+    
+            // Remove the disconnected edges
+            if (_graphView != null && edgesToRemove.Count > 0)
+            {
+                foreach (var edge in edgesToRemove)
+                {
+                    _graphView.RemoveElement(edge);
+                }
+                Debug.Log($"Removed {edgesToRemove.Count} disconnected edges due to port mode change");
+            }
+        }
+        
+        private Port GetMatchingPortForEdge(Edge edge)
+        {
+            if (NodeData.choices.Length == 0)
+            {
+                return _nextPort;
+            }
+            else
+            {
+                // Try to find which choice port this edge should connect to
+                // This is complex - you might need to store which choice index an edge belongs to
+                return _choicePorts.Count > 0 ? _choicePorts[0] : null;
+            }
         }
 
+        private void RefreshChoicesUi()
+        {
+            _choicesContainer.Clear();
+            for (int i = 0; i < NodeData.choices.Length; i++)
+            {
+                AddChoiceUI(i);
+            }
+        }
         
         private Port CreateNextPort(Orientation orientation)
         {
@@ -158,7 +228,12 @@ namespace DialogueSystem.Editor
             var choiceBox = new VisualElement { style = { flexDirection = FlexDirection.Column, borderLeftWidth = 1 } };
 
             var choiceKey = new TextField("Choice Key") { value = choice.textKey };
-            choiceKey.RegisterValueChangedCallback(evt => choice.textKey = evt.newValue);
+            choiceKey.RegisterValueChangedCallback(evt => 
+            { 
+                choice.textKey = evt.newValue;
+                // Update the port name when choice key changes
+                UpdateChoicePortName(index);
+            });
             choiceBox.Add(choiceKey);
 
             // Conditions foldout
@@ -184,6 +259,20 @@ namespace DialogueSystem.Editor
             _choicesContainer.Add(choiceBox);
         }
 
+        // Add this helper method to update individual port names
+        private void UpdateChoicePortName(int index)
+        {
+            if (index >= 0 && index < _choicePorts.Count)
+            {
+                var choice = NodeData.choices[index];
+                var portName = string.IsNullOrEmpty(choice.textKey) ? $"Choice {index}" : choice.textKey;
+                _choicePorts[index].portName = portName;
+        
+                // Refresh the port visual
+                _choicePorts[index].MarkDirtyRepaint();
+            }
+        }
+
         private void BuildConditionsUI(VisualElement parent, DialogueChoice choice)
         {
             parent.Clear();
@@ -200,28 +289,31 @@ namespace DialogueSystem.Editor
 
             for (int i = 0; i < choice.Conditions.Length; i++)
             {
+                int conditionIndex = i;
                 var cond = choice.Conditions[i];
                 var container = new VisualElement { style = { flexDirection = FlexDirection.Row } };
 
-                // Dropdown for available condition IDs
-                var pop = new PopupField<string>(defs.conditions.ConvertAll(d => d.id), cond.id);
+                var conditionChoices = defs.conditions.ConvertAll(d => d.displayName);
+                var currentIndex = defs.conditions.FindIndex(c => c.id == cond.id);
+                var pop = new PopupField<string>(conditionChoices, currentIndex >= 0 ? currentIndex : 0);
+
                 pop.RegisterValueChangedCallback(evt =>
                 {
-                    cond.id = evt.newValue;
-                    // adjust args array based on def
-                    var def = defs.GetConditionDef(cond.id);
-                    if (def != null)
+                    var selectedDef = defs.conditions.Find(c => c.displayName == evt.newValue);
+                    if (selectedDef != null)
                     {
-                        cond.args = new string[def.args.Count];
+                        cond.id = selectedDef.id;
+                        // adjust args array based on def
+                        cond.args = new string[selectedDef.args.Count];
+                        BuildConditionsUI(parent, choice); // rebuild to show args
                     }
-                    BuildConditionsUI(parent, choice); // rebuild to show args
                 });
                 container.Add(pop);
 
                 var remove = new Button(() =>
                 {
                     var list = choice.Conditions.ToList();
-                    list.RemoveAt(i);
+                    list.RemoveAt(conditionIndex);
                     choice.Conditions = list.ToArray();
                     BuildConditionsUI(parent, choice);
                 }) { text = "Remove" };
@@ -236,7 +328,11 @@ namespace DialogueSystem.Editor
                     for (int a = 0; a < def2.args.Count; a++)
                     {
                         string argVal = (cond.args != null && a < cond.args.Length) ? cond.args[a] : "";
-                        var fld = new TextField(def2.args[a].name) { value = argVal };
+                        var argDef = def2.args[a];
+                        var fld = new TextField(argDef.name) { 
+                            value = argVal,
+                            tooltip = argDef.placeholder // Show placeholder as tooltip
+                        };
                         int captureA = a;
                         fld.RegisterValueChangedCallback(evt =>
                         {
@@ -273,24 +369,32 @@ namespace DialogueSystem.Editor
 
             for (int i = 0; i < choice.actions.Length; i++)
             {
+                int actionIndex = i;
                 var act = choice.actions[i];
                 var container = new VisualElement { style = { flexDirection = FlexDirection.Row } };
 
-                var pop = new PopupField<string>(defs.actions.ConvertAll(d => d.id), act.id);
+                var actionChoices = defs.actions.ConvertAll(d => d.displayName);
+                var currentIndex = defs.actions.FindIndex(a => a.id == act.id);
+                var pop = new PopupField<string>(actionChoices, currentIndex >= 0 ? currentIndex : 0);
+                
                 pop.RegisterValueChangedCallback(evt =>
                 {
-                    act.id = evt.newValue;
-                    var def = defs.GetActionDef(act.id);
-                    if (def != null)
-                        act.args = new string[def.args.Count];
-                    BuildActionsUI(parent, choice);
+                    var selectedDef = defs.actions.Find(a => a.displayName == evt.newValue);
+                    if (selectedDef != null)
+                    {
+                        act.id = selectedDef.id;
+                        var def = defs.GetActionDef(act.id);
+                        if (def != null)
+                            act.args = new string[def.args.Count];
+                        BuildActionsUI(parent, choice);
+                    }
                 });
                 container.Add(pop);
 
                 var remove = new Button(() =>
                 {
                     var list = choice.actions.ToList();
-                    list.RemoveAt(i);
+                    list.RemoveAt(actionIndex);
                     choice.actions = list.ToArray();
                     BuildActionsUI(parent, choice);
                 }) { text = "Remove" };
@@ -304,7 +408,11 @@ namespace DialogueSystem.Editor
                     for (int a = 0; a < def2.args.Count; a++)
                     {
                         string argVal = (act.args != null && a < act.args.Length) ? act.args[a] : "";
-                        var fld = new TextField(def2.args[a].name) { value = argVal };
+                        var argDef = def2.args[a];
+                        var fld = new TextField(argDef.name) { 
+                            value = argVal,
+                            tooltip = argDef.placeholder // Show placeholder as tooltip
+                        };
                         int captureA = a;
                         fld.RegisterValueChangedCallback(evt =>
                         {
@@ -325,6 +433,20 @@ namespace DialogueSystem.Editor
             }) { text = "Add Action" };
             parent.Add(addBtn);
         }
+        
+        private TextField CreateArgumentField(string label, string value, string placeholder)
+        {
+            var field = new TextField(label) { value = value };
+    
+            // Use placeholder as tooltip for now
+            field.tooltip = placeholder;
+    
+            // Optional: Add placeholder text as watermark (more complex)
+            // field.AddToClassList("argument-field");
+            // Then use USS to style empty fields
+    
+            return field;
+        }
 
         #region Choice modifications
         private void RemoveChoiceAt(int index)
@@ -332,25 +454,22 @@ namespace DialogueSystem.Editor
             var list = NodeData.choices.ToList();
             list.RemoveAt(index);
             NodeData.choices = list.ToArray();
-            // If all choices removed, restore next port
-            if (NodeData.choices.Length == 0 && _nextPort == null)
-            {
-                _nextPort = CreateNextPort(Orientation.Horizontal);
-                _nextPort.portName = "Next";
-            }
+        
+            // Simply refresh - the logic above will handle switching modes
             RefreshModeUI();
         }
         public void AddChoice()
         {
             var list = (NodeData.choices ?? new DialogueChoice[0]).ToList();
-            list.Add(new DialogueChoice { textKey = "choice", nextNodeId = "" , Conditions = new Condition[0], actions = new ActionEvent[0]});
+            list.Add(new DialogueChoice { 
+                textKey = "choice", 
+                nextNodeId = "", 
+                Conditions = new Condition[0], 
+                actions = new ActionEvent[0]
+            });
             NodeData.choices = list.ToArray();
-            // Remove next port if this is the first choice
-            if (_nextPort != null)
-            {
-                outputContainer.Remove(_nextPort);
-                _nextPort = null;
-            }
+        
+            // Simply refresh - the logic above will handle switching modes
             RefreshModeUI();
         }
         

@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79f3c97ce4782074599854fc480ffa18, type: 3}
+  m_Name: NewDialogue
+  m_EditorClassIdentifier: 
+  nodes:
+  - guid: 00d17558-98c6-459f-99e4-68edfaa08f15
+    position: {x: 729, y: -168}
+    speakerId: Lanista
+    textKey: axe_choice_1
+    choices: []
+    nextNodeId: 
+  - guid: 3cf898a1-f654-4e84-a6bf-349a43ffacec
+    position: {x: 206, y: -142}
+    speakerId: Lanista
+    textKey: choose_your_tool
+    choices:
+    - textKey: choice
+      nextNodeId: 00d17558-98c6-459f-99e4-68edfaa08f15
+      Conditions: []
+      actions: []
+    - textKey: choice
+      nextNodeId: 657cc9b6-2fc1-4abb-aa97-6c177e7d3036
+      Conditions: []
+      actions: []
+    nextNodeId: 
+  - guid: 657cc9b6-2fc1-4abb-aa97-6c177e7d3036
+    position: {x: 759, y: -1}
+    speakerId: 
+    textKey: 
+    choices: []
+    nextNodeId: 
+  startNodeId: 3cf898a1-f654-4e84-a6bf-349a43ffacec

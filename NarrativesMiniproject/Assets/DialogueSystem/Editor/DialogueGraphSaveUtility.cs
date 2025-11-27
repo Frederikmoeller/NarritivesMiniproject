@@ -42,17 +42,26 @@ namespace DialogueSystem.Editor
 
         public static void SaveGraphToAsset(DialogueGraphView graphView, DialogueAsset asset)
         {
-            // iterate nodes in graphView and write to asset.nodes
-            var nodeViews = graphView.nodes.ToList().Where(n => n is DialogueNodeView).Select(n => n as DialogueNodeView).ToList();
+            var nodeViews = graphView.nodes.ToList().OfType<DialogueNodeView>().ToList();
             var lines = new List<DialogueLine>();
+
+            // Find start node and set entry point
+            var startNode = graphView.nodes.ToList().FirstOrDefault(n => n is StartNodeView) as StartNodeView;
+            if (startNode != null && startNode.GetOutputPort().connections.Any())
+            {
+                var firstEdge = startNode.GetOutputPort().connections.First();
+                var targetNode = firstEdge.input.node as DialogueNodeView;
+                if (targetNode != null)
+                {
+                    asset.startNodeId = targetNode.NodeData.guid;
+                }
+            }
 
             foreach (var nv in nodeViews)
             {
                 var data = nv.NodeData;
-                // Save position
                 var rect = nv.GetPosition();
                 data.position = rect.position;
-                // Ensure guid exists
                 if (string.IsNullOrEmpty(data.guid)) data.guid = Guid.NewGuid().ToString();
                 lines.Add(data);
             }
