@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using DialogueSystem;
+using DialogueSystem.Data;
 
 namespace DialogueSystem.Editor
 {
@@ -31,12 +31,12 @@ namespace DialogueSystem.Editor
         {
             var dl = new DialogueLine()
             {
-                speakerId = "",
-                textKey = "",
-                choices = new DialogueChoice[0],
-                nextNodeId = "",
+                SpeakerId = "",
+                TextKey = "",
+                Choices = new DialogueChoice[0],
+                NextNodeId = "",
             };
-            dl.guid = Guid.NewGuid().ToString();
+            dl.Guid = Guid.NewGuid().ToString();
             return dl;
         }
 
@@ -59,8 +59,8 @@ namespace DialogueSystem.Editor
             {
                 var data = nv.NodeData;
                 var rect = nv.GetPosition();
-                data.position = rect.position;
-                if (string.IsNullOrEmpty(data.guid)) data.guid = Guid.NewGuid().ToString();
+                data.Position = rect.position;
+                if (string.IsNullOrEmpty(data.Guid)) data.Guid = Guid.NewGuid().ToString();
                 lines.Add(data);
             }
 

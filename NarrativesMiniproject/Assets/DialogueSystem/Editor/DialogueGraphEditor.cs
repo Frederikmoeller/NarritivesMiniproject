@@ -5,6 +5,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 using DialogueSystem;
+using DialogueSystem.Data;
 using UnityEditor.UIElements;
 
 namespace DialogueSystem.Editor
@@ -366,7 +367,7 @@ namespace DialogueSystem.Editor
             for (int i = 0; i < condition.args.Count; i++)
             {
                 int argIndex = i; // Capture the index
-                AddArgumentDefinitionUI(argsContainer, i, condition.args[i], () =>
+                AddArgumentDefinitionUi(argsContainer, i, condition.args[i], () =>
                 {
                     condition.args.RemoveAt(argIndex);
                     RefreshDefinitionsUI();
@@ -441,7 +442,7 @@ namespace DialogueSystem.Editor
             for (int i = 0; i < action.args.Count; i++)
             {
                 int argIndex = i; // Capture the index
-                AddArgumentDefinitionUI(argsContainer, i, action.args[i], () =>
+                AddArgumentDefinitionUi(argsContainer, i, action.args[i], () =>
                 {
                     action.args.RemoveAt(argIndex);
                     RefreshDefinitionsUI();
@@ -468,7 +469,7 @@ namespace DialogueSystem.Editor
             parent.Add(container);
         }
         
-        private void AddArgumentDefinitionUI(VisualElement parent, int index, ArgumentDefinition arg, Action onRemove)
+        private void AddArgumentDefinitionUi(VisualElement parent, int index, ArgumentDefinition arg, Action onRemove)
         {
             var container = new VisualElement { style = { flexDirection = FlexDirection.Row, marginBottom = 5, alignItems = Align.Center } };
         

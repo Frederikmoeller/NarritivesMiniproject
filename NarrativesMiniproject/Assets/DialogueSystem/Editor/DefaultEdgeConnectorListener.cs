@@ -1,32 +1,30 @@
-using DialogueSystem.Editor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class DialogueEdgeConnectorListener : IEdgeConnectorListener
+namespace DialogueSystem.Editor
 {
-    private DialogueGraphView _graphView; // base class
-
-    public DialogueEdgeConnectorListener(DialogueGraphView graphView)
+    public class DialogueEdgeConnectorListener : IEdgeConnectorListener
     {
-        _graphView = graphView;
-        Debug.Log("DialogueEdgeConnectorListener created!");
-    }
+        private readonly DialogueGraphView _graphView; // base class
 
-    public void OnDropOutsidePort(Edge edge, Vector2 position)
-    {
-        Debug.Log($"OnDropOutsidePort called! Position: {position}");
-        // Create a new node where the edge was dropped
-        _graphView.CreateNodeFromEdgeDrop(edge, position);
-    }
+        public DialogueEdgeConnectorListener(DialogueGraphView graphView)
+        {
+            _graphView = graphView;
+        }
 
-    public void OnDrop(GraphView graphView, Edge edge)
-    {
-        Debug.Log($"OnDrop called! Connecting {edge.output.node.name} to {edge.input.node.name}");
-        _graphView.AddElement(edge);
-        edge.userData = $"Edge from {edge.output.node.viewDataKey} to {edge.input.node.viewDataKey}";
-        Debug.Log(edge.userData);
+        public void OnDropOutsidePort(Edge edge, Vector2 position)
+        {
+            // Create a new node where the edge was dropped
+            _graphView.CreateNodeFromEdgeDrop(edge, position);
+        }
 
-        // Update the node data connections
-        _graphView.UpdateNodeConnections(edge);
+        public void OnDrop(GraphView graphView, Edge edge)
+        {
+            _graphView.AddElement(edge);
+            edge.userData = $"Edge from {edge.output.node.viewDataKey} to {edge.input.node.viewDataKey}";
+
+            // Update the node data connections
+            _graphView.UpdateNodeConnections(edge);
+        }
     }
 }

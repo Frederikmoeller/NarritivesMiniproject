@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace DialogueSystem
+namespace DialogueSystem.Data
 {
     [Serializable]
     public class ArgumentDefinition

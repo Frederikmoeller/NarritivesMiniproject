@@ -18,13 +18,12 @@ MonoBehaviour:
     args:
     - name: object_id
       placeholder: ' Object ID'
+    - name: new_arg
+      placeholder: value
   - id: QUEST
     displayName: Quest
     args: []
   - id: ITEM
     displayName: Item
     args: []
-  actions:
-  - id: NEW_ACTION
-    displayName: New Action
-    args: []
+  actions: []

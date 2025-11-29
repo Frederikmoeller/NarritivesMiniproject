@@ -1,16 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using DialogueSystem.Data;
 using UnityEngine.UIElements;
 
 namespace DialogueSystem.Editor
 {
     public class DialogueGraphView : GraphView
     {
-        private DialogueGraphEditor _editorWindow;
+        private readonly DialogueGraphEditor _editorWindow;
         private MiniMap _miniMap;
         private EdgeConnector<Edge> _edgeConnector;
 
@@ -30,8 +30,6 @@ namespace DialogueSystem.Editor
             Insert(0, grid);
             grid.StretchToParentSize();
             graphViewChanged = OnGraphViewChanged;
-
-            Debug.Log("DialogueGraphView initialized with edge connector");
         }
         
         public void RegisterPortToEdgeConnector(Port port)
@@ -42,8 +40,6 @@ namespace DialogueSystem.Editor
             var edgeConnectorListener = new DialogueEdgeConnectorListener(this);
             var edgeConnector = new EdgeConnector<Edge>(edgeConnectorListener);
             port.AddManipulator(edgeConnector);
-
-            Debug.Log($"Registered edge connector for port: {port.portName}");
         }
         
         // <<< Critical for making ports connectable >>>
@@ -60,12 +56,7 @@ namespace DialogueSystem.Editor
 
             return compatiblePorts;
         }
-        
-        private void OnDragPerform(DragPerformEvent evt)
-        {
-            // Future support for drag & drop
-        }
-        
+
         public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
         {
             base.BuildContextualMenu(evt);
@@ -78,6 +69,7 @@ namespace DialogueSystem.Editor
             var nodeView = new DialogueNodeView(nodeData, this);
             nodeView.SetPosition(new Rect(position, new Vector2(200, 150)));
             AddElement(nodeView);
+            MarkAssetDirty();
         }
 
         public void LoadFromAsset(DialogueAsset asset)
@@ -92,7 +84,7 @@ namespace DialogueSystem.Editor
                 foreach (var node in asset.nodes)
                 {
                     var nv = new DialogueNodeView(node, this);
-                    nv.SetPosition(new Rect(node.position, new Vector2(200, 150)));
+                    nv.SetPosition(new Rect(node.Position, new Vector2(200, 150)));
                     AddElement(nv);
                 }
             }
@@ -124,9 +116,9 @@ namespace DialogueSystem.Editor
             foreach (var nv in nodeViews)
             {
                 // Next node edge
-                if (!string.IsNullOrEmpty(nv.NodeData.nextNodeId))
+                if (!string.IsNullOrEmpty(nv.NodeData.NextNodeId))
                 {
-                    var targetNode = FindNodeViewByGuid(nv.NodeData.nextNodeId);
+                    var targetNode = FindNodeViewByGuid(nv.NodeData.NextNodeId);
                     if (targetNode != null && nv.GetNextPort() != null)
                     {
                         CreateEdge(nv.GetNextPort(), targetNode.GetInputPort());
@@ -134,12 +126,12 @@ namespace DialogueSystem.Editor
                 }
         
                 // Choices edges
-                if (nv.NodeData.choices == null) continue;
-                for (int i = 0; i < nv.NodeData.choices.Length; i++)
+                if (nv.NodeData.Choices == null) continue;
+                for (int i = 0; i < nv.NodeData.Choices.Length; i++)
                 {
-                    var choice = nv.NodeData.choices[i];
-                    if (string.IsNullOrEmpty(choice.nextNodeId)) continue;
-                    var target = FindNodeViewByGuid(choice.nextNodeId);
+                    var choice = nv.NodeData.Choices[i];
+                    if (string.IsNullOrEmpty(choice.NextNodeId)) continue;
+                    var target = FindNodeViewByGuid(choice.NextNodeId);
                     if (target == null) continue;
                     var choicePort = nv.GetChoicePort(i);
                     if (choicePort != null)
@@ -150,7 +142,7 @@ namespace DialogueSystem.Editor
             }
         }
 
-        public void RefreshAllNodes()
+        private void RefreshAllNodes()
         {
             foreach (var node in nodes.ToList())
             {
@@ -163,27 +155,13 @@ namespace DialogueSystem.Editor
             }
         }
 
-        private void ConnectChoiceEdge(DialogueNodeView sourceNode, int choiceIndex, DialogueNodeView targetNode)
-        {
-            var choicePort = sourceNode.GetChoicePort(choiceIndex);
-            if (choicePort != null && targetNode.GetInputPort() != null)
-            {
-                CreateEdge(choicePort, targetNode.GetInputPort());
-            }
-            else
-            {
-                // If ports aren't ready yet, try one more time
-                EditorApplication.delayCall += () => ConnectChoiceEdge(sourceNode, choiceIndex, targetNode);
-            }
-        }
-
         private DialogueNodeView FindNodeViewByGuid(string guid)
         {
             foreach (var n in nodes)
             {
                 var dv = n as DialogueNodeView;
                 if (dv == null) continue;
-                if (dv.NodeData.guid == guid) return dv;
+                if (dv.NodeData.Guid == guid) return dv;
             }
 
             return null;
@@ -208,8 +186,8 @@ namespace DialogueSystem.Editor
             entry.SetPosition(new Rect(10, 10, 150, 50));
             return entry;
         }
-        
-        public GraphViewChange OnGraphViewChanged(GraphViewChange change) 
+
+        private GraphViewChange OnGraphViewChanged(GraphViewChange change) 
         {
             // Handle newly created edges
             if (change.edgesToCreate != null)
@@ -225,8 +203,8 @@ namespace DialogueSystem.Editor
                     // Determine if it's the main Next port
                     if (edge.output == outNode.GetNextPort())
                     {
-                        outNode.NodeData.nextNodeId = inNode.NodeData.guid;
-                        Debug.Log($"Set nextNodeId for {outNode.NodeData.guid} -> {inNode.NodeData.guid}");
+                        outNode.NodeData.NextNodeId = inNode.NodeData.Guid;
+                        Debug.Log($"Set nextNodeId for {outNode.NodeData.Guid} -> {inNode.NodeData.Guid}");
                     }
                     else
                     {
@@ -234,13 +212,13 @@ namespace DialogueSystem.Editor
                         int choiceIndex = outNode.GetChoicePortIndex(edge.output);
                         if (choiceIndex >= 0)
                         {
-                            outNode.NodeData.choices[choiceIndex].nextNodeId = inNode.NodeData.guid;
-                            Debug.Log($"Set choice {choiceIndex} nextNodeId for {outNode.NodeData.guid} -> {inNode.NodeData.guid}");
+                            outNode.NodeData.Choices[choiceIndex].NextNodeId = inNode.NodeData.Guid;
+                            Debug.Log($"Set choice {choiceIndex} nextNodeId for {outNode.NodeData.Guid} -> {inNode.NodeData.Guid}");
                         }
                     }
 
                     // Optional: store edge userData for debugging
-                    edge.userData = new { from = outNode.NodeData.guid, to = inNode.NodeData.guid };
+                    edge.userData = new { from = outNode.NodeData.Guid, to = inNode.NodeData.Guid };
                 }
             }
 
@@ -255,17 +233,17 @@ namespace DialogueSystem.Editor
                         if (outNode == null) continue;
 
                         if (edge.output == outNode.GetNextPort())
-                            outNode.NodeData.nextNodeId = null;
+                            outNode.NodeData.NextNodeId = null;
                         else
                         {
                             int idx = outNode.GetChoicePortIndex(edge.output);
                             if (idx >= 0)
-                                outNode.NodeData.choices[idx].nextNodeId = null;
+                                outNode.NodeData.Choices[idx].NextNodeId = null;
                         }
                     }
                 }
             }
-            EditorUtility.SetDirty(_editorWindow.CurrentAsset);
+            MarkAssetDirty();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             return change;
@@ -300,7 +278,7 @@ namespace DialogueSystem.Editor
             nodeView.SetPosition(new Rect(graphPosition, new Vector2(200, 150)));
             AddElement(nodeView);
     
-            Debug.Log($"Created new node with GUID: {nodeData.guid}");
+            Debug.Log($"Created new node with GUID: {nodeData.Guid}");
     
             // Connect the edge to the new node
             var newInputPort = nodeView.GetInputPort();
@@ -324,54 +302,67 @@ namespace DialogueSystem.Editor
                 Debug.LogError("Failed to connect edge - null ports detected");
                 Debug.Log($"newInputPort: {newInputPort}, edge.output: {edge.output}");
             }
+            MarkAssetDirty();
         }
 
         public void UpdateNodeConnections(Edge edge)
         {
-            var outputNode = edge.output.node as DialogueNodeView;
-            var startNode = edge.output.node as StartNodeView; 
             var inputNode = edge.input.node as DialogueNodeView;
     
-            if (outputNode != null && inputNode != null)
+            if (edge.output.node is DialogueNodeView outputNode && inputNode != null)
             {
                 if (edge.output == outputNode.GetNextPort())
                 {
-                    outputNode.NodeData.nextNodeId = inputNode.NodeData.guid;
+                    outputNode.NodeData.NextNodeId = inputNode.NodeData.Guid;
                 }
                 else
                 {
                     int choiceIndex = outputNode.GetChoicePortIndex(edge.output);
                     if (choiceIndex >= 0)
                     {
-                        outputNode.NodeData.choices[choiceIndex].nextNodeId = inputNode.NodeData.guid;
+                        outputNode.NodeData.Choices[choiceIndex].NextNodeId = inputNode.NodeData.Guid;
                     }
                 }
             }
-            else if (startNode != null && inputNode != null)
+            else if (edge.output.node is StartNodeView startNode && inputNode != null)
             {
-                startNode.StartNodeId = inputNode.NodeData.guid;
+                startNode.StartNodeId = inputNode.NodeData.Guid;
                 if (_editorWindow.CurrentAsset != null)
                 {
-                    _editorWindow.CurrentAsset.startNodeId = inputNode.NodeData.guid;
+                    _editorWindow.CurrentAsset.startNodeId = inputNode.NodeData.Guid;
                 }
             }
     
             // Mark asset as dirty
-            if (_editorWindow.CurrentAsset != null)
+            MarkAssetDirty();
+        }
+        
+        public void MarkAssetDirty()
+        {
+            if (_editorWindow?.CurrentAsset != null)
             {
                 EditorUtility.SetDirty(_editorWindow.CurrentAsset);
+                
+                DialogueGraphSaveUtility.SaveGraphToAsset(this, _editorWindow?.CurrentAsset);
+                // Debug.Log("Marked asset as dirty from GraphView");
+        
+                // Optional: Auto-save if you want immediate persistence
+                // AssetDatabase.SaveAssets();
             }
-}
+            else
+            {
+                Debug.LogWarning("Cannot mark asset dirty: CurrentAsset is null");
+            }
+        }
     }
-    public class StartNodeView : Node
+    public sealed class StartNodeView : Node
     {
         public string StartNodeId { get; set; }
-        private Port _outputPort;
-        private DialogueGraphView _graphView;
+        private readonly Port _outputPort;
 
         public StartNodeView(DialogueGraphView graphView = null)
         {
-            _graphView = graphView;
+            var dialogueGraphView = graphView;
         
             title = "START";
             viewDataKey = "START_NODE";
@@ -385,8 +376,8 @@ namespace DialogueSystem.Editor
             outputContainer.Add(_outputPort);
         
             // Register with edge connector
-            if (_graphView != null)
-                _graphView.RegisterPortToEdgeConnector(_outputPort);
+            if (dialogueGraphView != null)
+                dialogueGraphView.RegisterPortToEdgeConnector(_outputPort);
     
             RefreshExpandedState();
             RefreshPorts();

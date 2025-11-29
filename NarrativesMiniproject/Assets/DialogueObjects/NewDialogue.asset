@@ -13,28 +13,22 @@ MonoBehaviour:
   m_Name: NewDialogue
   m_EditorClassIdentifier: 
   nodes:
-  - guid: 3cf898a1-f654-4e84-a6bf-349a43ffacec
-    position: {x: 211, y: -3}
-    speakerId: Lanista
-    textKey: choose_your_tool
-    choices: []
-    nextNodeId: 00d17558-98c6-459f-99e4-68edfaa08f15
-  - guid: 00d17558-98c6-459f-99e4-68edfaa08f15
-    position: {x: 501, y: -3}
-    speakerId: Lanista
-    textKey: axe_choice_1
-    choices: []
-    nextNodeId: 657cc9b6-2fc1-4abb-aa97-6c177e7d3036
-  - guid: 657cc9b6-2fc1-4abb-aa97-6c177e7d3036
-    position: {x: 764, y: -3}
-    speakerId: 
-    textKey: 
-    choices: []
-    nextNodeId: e12925e6-598e-44fc-bd6a-c82f4c42ecb8
-  - guid: e12925e6-598e-44fc-bd6a-c82f4c42ecb8
-    position: {x: 1006, y: -3}
-    speakerId: 
-    textKey: 
-    choices: []
-    nextNodeId: 0c28874e-74e3-431d-88a9-294219f9db16
-  startNodeId: 3cf898a1-f654-4e84-a6bf-349a43ffacec
+  - Guid: 46b407bb-1832-4839-965e-59b93d7f9521
+    Position: {x: 187, y: 10}
+    SpeakerId: 
+    TextKey: 
+    Choices:
+    - TextKey: choice
+      NextNodeId: 
+      Conditions:
+      - StandardCondition: 0
+        CustomConditionId: 
+        Args:
+        - 
+      Actions: []
+    - TextKey: choice
+      NextNodeId: 
+      Conditions: []
+      Actions: []
+    NextNodeId: 
+  startNodeId: 190322f2-2b6b-4db9-a05b-8159bc982259
