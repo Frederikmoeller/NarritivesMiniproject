@@ -30,6 +30,17 @@ public class SimpleWeaponController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha2)) EquipWeapon(stethoscope);
     }
 
+public void EnableAxe(bool enable)
+{
+    axe.SetActive(enable);
+}
+
+public void EnableStethoscope(bool enable)
+{
+    stethoscope.SetActive(enable);
+}
+
+
     void EquipWeapon(GameObject newWeapon)
     {
         if (currentWeapon) currentWeapon.SetActive(false);

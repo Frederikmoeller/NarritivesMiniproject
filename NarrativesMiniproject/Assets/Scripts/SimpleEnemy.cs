@@ -100,6 +100,8 @@ public class SimpleEnemy : MonoBehaviour
 
     IEnumerator PerformAttack()
     {
+
+
         isAttacking = true;
         agent.isStopped = true;
         animator.SetBool("isRunning", false);
@@ -111,7 +113,14 @@ public class SimpleEnemy : MonoBehaviour
         nextAttackTime = Time.time + attackCooldown;
 
         yield return new WaitForSeconds(1.2f);
-
+                // apply damage to player if in range
+        float playerDist = Vector3.Distance(transform.position, player.position);
+        if (playerDist <= attackRange + 0.5f)
+        {
+            var pHealth = player.GetComponent<Health>();
+            if (pHealth != null)
+                pHealth.TakeDamage(5f); // or whatever dmg you want
+        }
         isAttacking = false;
         agent.isStopped = false;
     }
