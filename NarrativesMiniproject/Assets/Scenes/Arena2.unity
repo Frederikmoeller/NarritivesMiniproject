@@ -226,8 +226,9 @@ MonoBehaviour:
   fightersParent: {fileID: 1676374286}
   playerHealth: {fileID: 1000947086}
   weapons: {fileID: 1125944874}
+  stethoscopeObject: {fileID: 0}
   allowHealing: 0
-  nextSceneName: Talk2
+  nextSceneName: ArenaFinal
   isFinalFight: 0
 --- !u!4 &73504038
 Transform:
@@ -1313,7 +1314,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0233c282aa46ffc48b955e29956cef14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 25
+  damage: 100
   isHealingTool: 0
   healAmount: 34
   debugLogs: 1
@@ -2113,6 +2114,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 250
   currentHealth: 250
+  damageCooldown: 1.2
 --- !u!1001 &1023072080
 PrefabInstance:
   m_ObjectHideFlags: 0

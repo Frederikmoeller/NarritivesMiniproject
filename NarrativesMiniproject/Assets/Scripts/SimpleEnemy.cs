@@ -11,6 +11,9 @@ public class SimpleEnemy : MonoBehaviour
     public float moveSpeed = 3.5f;
     public float attackCooldown = 2f;
     public float hitCooldown = 0.5f;
+    float damageLockoutUntil = 0f;
+    public bool hasDiedOnce = false;
+
 
     [Header("Refs")]
     public Animator animator;
@@ -98,51 +101,86 @@ public class SimpleEnemy : MonoBehaviour
         // beyond first three interruptions both survive
     }
 
-    IEnumerator PerformAttack()
+IEnumerator PerformAttack()
+{
+    isAttacking = true;
+    agent.isStopped = true;
+    animator.SetBool("isRunning", false);
+
+    if (nextAttackLeft) animator.SetTrigger("attackLeft");
+    else animator.SetTrigger("attackRight");
+
+    nextAttackLeft = !nextAttackLeft;
+    nextAttackTime = Time.time + attackCooldown;
+
+    yield return new WaitForSeconds(1.2f);
+
+    // 0) Do not damage if dead (fixes death-hit bug)
+    if (isDead)
     {
-
-
-        isAttacking = true;
-        agent.isStopped = true;
-        animator.SetBool("isRunning", false);
-
-        if (nextAttackLeft) animator.SetTrigger("attackLeft");
-        else animator.SetTrigger("attackRight");
-
-        nextAttackLeft = !nextAttackLeft;
-        nextAttackTime = Time.time + attackCooldown;
-
-        yield return new WaitForSeconds(1.2f);
-                // apply damage to player if in range
-        float playerDist = Vector3.Distance(transform.position, player.position);
-        if (playerDist <= attackRange + 0.5f)
-        {
-            var pHealth = player.GetComponent<Health>();
-            if (pHealth != null)
-                pHealth.TakeDamage(5f); // or whatever dmg you want
-        }
         isAttacking = false;
         agent.isStopped = false;
+        yield break;
     }
 
-    public void TakeDamage(float dmg)
+    // 1) Do not damage player if enemy is in damage animation
+    if (animator.GetCurrentAnimatorStateInfo(0).IsName("HumanM@CombatDamage01"))
     {
-        if (isDead || Time.time < nextHitTime) return;
-
-        nextHitTime = Time.time + hitCooldown;
-        health -= dmg;
-
-        if (health <= 0f)
-        {
-            health = 0f;
-            isDead = true;
-            DoDeathSequence();
-            return;
-        }
-
-        animator.ResetTrigger("die");
-        animator.SetTrigger("damage");
+        isAttacking = false;
+        agent.isStopped = false;
+        yield break;
     }
+
+    // 2) Do not damage player if still in 1-second post-hit lockout
+    if (Time.time < damageLockoutUntil)
+    {
+        isAttacking = false;
+        agent.isStopped = false;
+        yield break;
+    }
+
+    // 3) Apply damage
+    float playerDist = Vector3.Distance(transform.position, player.position);
+    if (playerDist <= attackRange + 0.5f)
+    {
+        var pHealth = player.GetComponent<Health>();
+        if (pHealth != null)
+            pHealth.TakeDamage(5f);
+    }
+
+    isAttacking = false;
+    agent.isStopped = false;
+}
+
+
+
+public void TakeDamage(float dmg)
+{
+    if (isDead || Time.time < nextHitTime) return;
+
+    nextHitTime = Time.time + hitCooldown;
+    health -= dmg;
+
+    // Prevent enemy from damaging for 1 second after being hit
+    damageLockoutUntil = Time.time + 1f;
+
+    if (health <= 0f)
+    {
+        health = 0f;
+        isDead = true;
+
+        // Mark that this enemy has died at least once
+        hasDiedOnce = true;
+
+        DoDeathSequence();
+        return;
+    }
+
+    animator.ResetTrigger("die");
+    animator.SetTrigger("damage");
+}
+
+
 
     // --- central death sequence ---
     void DoDeathSequence()
@@ -170,21 +208,22 @@ public class SimpleEnemy : MonoBehaviour
         }
     }
 
-    // normal death path
-    void DieOnce()
-    {
-        if (isDead) return;
-        isDead = true;
-        DoDeathSequence();
-    }
+void DieOnce()
+{
+    if (isDead) return;
+    isDead = true;
+    hasDiedOnce = true;       
+    DoDeathSequence();
+}
 
-    // forced fake-fight kill
-    void ForceDie()
-    {
-        if (isDead) return;
-        isDead = true;
-        DoDeathSequence();
-    }
+void ForceDie()
+{
+    if (isDead) return;
+    isDead = true;
+    hasDiedOnce = true;      
+    DoDeathSequence();
+}
+
 
     public void Heal(float amount)
     {

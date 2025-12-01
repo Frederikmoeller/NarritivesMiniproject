@@ -1263,7 +1263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0233c282aa46ffc48b955e29956cef14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 25
+  damage: 100
   isHealingTool: 0
   healAmount: 34
   debugLogs: 1
@@ -2063,6 +2063,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 250
   currentHealth: 250
+  damageCooldown: 1.2
 --- !u!1001 &1023072080
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3103,52 +3104,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8864802157107699175, guid: 84f41f664721a934b9a323b586701786, type: 3}
   m_PrefabInstance: {fileID: 1397883775}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1449193110
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1449193112}
-  - component: {fileID: 1449193111}
-  m_Layer: 0
-  m_Name: GameState
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1449193111
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1449193110}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 95d5864fde415b84cb76f871b61cfa0a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  allKilled: 0
-  allHealed: 0
---- !u!4 &1449193112
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1449193110}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.3436813, y: 4.6991677, z: -9.339641}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1460397283
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3619,6 +3574,7 @@ MonoBehaviour:
   fightersParent: {fileID: 1676374286}
   playerHealth: {fileID: 1000947086}
   weapons: {fileID: 1125944874}
+  stethoscopeObject: {fileID: 0}
   allowHealing: 0
   nextSceneName: Arena2
   isFinalFight: 0
@@ -4417,4 +4373,3 @@ SceneRoots:
   - {fileID: 1676374286}
   - {fileID: 470121846}
   - {fileID: 1664940123}
-  - {fileID: 1449193112}

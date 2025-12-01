@@ -10,29 +10,16 @@ public class ArenaSceneManager : MonoBehaviour
     [Header("Player")]
     public Health playerHealth;
 
-    [Header("Weapons")]
-    public SimpleWeaponController weapons;
-    public GameObject stethoscopeObject;   // assign your stethoscope GameObject here
-    public bool allowHealing = false;      // ONLY true in final fight
-
     [Header("Scene Flow")]
     public string nextSceneName;
     public bool isFinalFight = false;
 
     bool outcomeTriggered = false;
-    bool anyEnemyDied = false;     // prevents early “all healed”
-
-    void Start()
-    {
-        // Always start with the axe, do NOT equip stethoscope automatically.
-        weapons.EnableAxe(true);
-
-        // Only final fight allows healing tool to be enabled.
-        stethoscopeObject.SetActive(allowHealing);
-    }
 
     void Update()
     {
+        if (outcomeTriggered) return;
+
         // PLAYER DEATH → restart scene
         if (playerHealth != null && playerHealth.isDead)
         {
@@ -47,21 +34,14 @@ public class ArenaSceneManager : MonoBehaviour
         }
 
         var fighters = fightersParent.GetComponentsInChildren<SimpleEnemy>();
-        if (fighters.Length == 0 || outcomeTriggered) return;
-
-        bool allDead = fighters.All(f => f.isDead);
-        bool allAlive = fighters.All(f => !f.isDead);
-
-        // Track if ANY enemy died so we can validate the heal ending.
-        if (!anyEnemyDied && fighters.Any(f => f.isDead))
-            anyEnemyDied = true;
+        if (fighters.Length == 0) return;
 
         // -----------------------------
-        // NON-FINAL FIGHTS (1 & 2)
+        // NON-FINAL FIGHTS
         // -----------------------------
         if (!isFinalFight)
         {
-            if (allDead)
+            if (fighters.All(f => f.isDead))
             {
                 outcomeTriggered = true;
                 SceneManager.LoadScene(nextSceneName);
@@ -69,25 +49,47 @@ public class ArenaSceneManager : MonoBehaviour
             return;
         }
 
-        // -----------------------------
-        // FINAL FIGHT LOGIC
-        // -----------------------------
-        // KILL ENDING
-        if (allDead)
-        {
-            outcomeTriggered = true;
-            ArenaResult.Instance.allKilled = true;
-            ArenaResult.Instance.allHealed = false;
-            SceneManager.LoadScene(nextSceneName);
-        }
+// -----------------------------
+// FINAL FIGHT LOGIC
+// -----------------------------
 
-        // HEAL ENDING — VALID ONLY IF an enemy died at least once
-        if (anyEnemyDied && allAlive)
-        {
-            outcomeTriggered = true;
-            ArenaResult.Instance.allHealed = true;
-            ArenaResult.Instance.allKilled = false;
-            SceneManager.LoadScene(nextSceneName);
-        }
+bool allDead = true;
+bool allHealed = true;
+
+foreach (var f in fighters)
+{
+    // KILL ENDING (everyone dead)
+    if (!f.isDead)
+        allDead = false;
+
+    // HEAL ENDING:
+    // - must have died at least once
+    // - must be alive now
+    // - must be fully healed
+    if (!f.hasDiedOnce) allHealed = false;
+    if (f.isDead)       allHealed = false;
+    if (f.health < 100) allHealed = false;
+}
+
+// KILL ENDING
+if (allDead)
+{
+    outcomeTriggered = true;
+    ArenaResult.Instance.allKilled = true;
+    ArenaResult.Instance.allHealed = false;
+    SceneManager.LoadScene(nextSceneName);
+    return;
+}
+
+// HEAL ENDING
+if (allHealed)
+{
+    outcomeTriggered = true;
+    ArenaResult.Instance.allKilled = false;
+    ArenaResult.Instance.allHealed = true;
+    SceneManager.LoadScene(nextSceneName);
+    return;
+}
+
     }
 }
