@@ -20,8 +20,6 @@ namespace DialogueSystem
             _runner.OnLineDisplayed += Ui.ShowLine;
             _runner.OnChoicesDisplayed += Ui.ShowChoices;
             _runner.OnDialogueEnd += Ui.HideAll;
-        
-            _runner.StartDialogue(StartAsset);
         }
     }
 }
