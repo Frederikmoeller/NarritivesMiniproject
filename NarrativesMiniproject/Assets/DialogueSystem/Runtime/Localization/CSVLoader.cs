@@ -17,16 +17,15 @@ namespace DialogueSystem.Localization
         {
             var db = new LocalizationDatabase();
             
-            string fullPath = filePath;
-
-            if (Path.IsPathRooted(filePath))
+            string fullPath = Path.Combine(Application.streamingAssetsPath, filePath);
+            /*if (Path.IsPathRooted(filePath))
             {
                 fullPath = Path.Combine(Application.streamingAssetsPath, filePath);
-            }
+            }*/
             
-            if (!File.Exists(filePath))
+            if (!File.Exists(fullPath))
             {
-                Debug.LogError($"CSV file not found: {filePath}");
+                Debug.LogError($"CSV file not found: {fullPath}");
                 return db;
             }
 

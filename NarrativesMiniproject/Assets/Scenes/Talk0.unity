@@ -522,6 +522,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4990003893107429667, guid: af33adb0671de354a9055d8884fbb639, type: 3}
+      propertyPath: _dialogueManager
+      value: 
+      objectReference: {fileID: 1161232731}
     - target: {fileID: 5898762219209767048, guid: af33adb0671de354a9055d8884fbb639, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -954,6 +958,7 @@ GameObject:
   - component: {fileID: 1161232733}
   - component: {fileID: 1161232732}
   - component: {fileID: 1161232731}
+  - component: {fileID: 1161232735}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -992,7 +997,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e15b30efebc9ff41958c52ab85dcf65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartAsset: {fileID: 0}
+  StartAsset: {fileID: 11400000, guid: d701ea81182640d4e9d72f66a1a82f5b, type: 2}
+  Ui: {fileID: 1161232735}
+  _runner:
+    rid: -2
+  references:
+    version: 2
+    RefIds:
+    - rid: -2
+      type: {class: , ns: , asm: }
 --- !u!114 &1161232732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1011,7 +1024,7 @@ MonoBehaviour:
   audioSource: {fileID: 0}
   typeSound: {fileID: 0}
   soundVolume: 0.5
-  preserveRichTextTags: 1
+  preserveRichTextTags: 0
 --- !u!114 &1161232733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1111,6 +1124,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1161232729}
   m_CullTransparentMesh: 1
+--- !u!114 &1161232735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1161232729}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3493df6b8b8f6e948bd5713d1eb4a50c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: {fileID: 1161232733}
+  choicesContainer: {fileID: 0}
 --- !u!1 &1218997171
 GameObject:
   m_ObjectHideFlags: 0

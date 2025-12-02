@@ -6,7 +6,7 @@ namespace DialogueSystem.Localization
     {
         public Dictionary<string, Dictionary<string, string>> data = new Dictionary<string, Dictionary<string, string>>();
 
-        public string CurrentLanguage { get; private set; } = "EN";
+        public string CurrentLanguage { get; private set; } = "English";
 
         public void SetLanguage(string lang)
         {

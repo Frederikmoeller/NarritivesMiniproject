@@ -54,7 +54,7 @@ namespace DialogueSystem
             CheckForEndOrContinue();
         }
 
-        DialogueLine FindNode(string id) => _asset.nodes.Find(n => n.NextNodeId == id || n.SpeakerId == id);
+        DialogueLine FindNode(string id) => _asset.nodes.Find(n => n.NextNodeId == id || n.SpeakerId == id || n.Guid == id);
 
         List<DialogueChoice> GetValidChoices(DialogueLine line) =>
             line.Choices.Where(c => AreConditionsMet(c.Conditions)).ToList();

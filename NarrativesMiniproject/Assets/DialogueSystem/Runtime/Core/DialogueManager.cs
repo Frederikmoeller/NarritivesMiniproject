@@ -8,18 +8,23 @@ namespace DialogueSystem
     public class DialogueManager : MonoBehaviour
     {
         public DialogueAsset StartAsset;
-        public IDialogueUI Ui;
+        public DialogueUI Ui;
 
-        private DialogueRunner _runner;
+        [SerializeReference] private DialogueRunner _runner;
         // Start is called once before the first execution of Update after the MonoBehaviour is created
         void Start()
         {
             LocalizationSystem.Load("Dialogue.csv");
-            LocalizationSystem.SetLanguage("EN");
+            LocalizationSystem.SetLanguage("English");
             _runner = new DialogueRunner();
             _runner.OnLineDisplayed += Ui.ShowLine;
             _runner.OnChoicesDisplayed += Ui.ShowChoices;
             _runner.OnDialogueEnd += Ui.HideAll;
+        }
+        
+        public void StartDialogue(bool useSavedState = true)
+        {
+            _runner.StartDialogue(StartAsset, useSavedState);
         }
     }
 }

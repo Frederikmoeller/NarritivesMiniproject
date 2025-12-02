@@ -13,24 +13,6 @@ MonoBehaviour:
   m_Name: NewDialogue
   m_EditorClassIdentifier: 
   nodes:
-  - Guid: 46b407bb-1832-4839-965e-59b93d7f9521
-    Position: {x: 253, y: -16}
-    SpeakerId: 
-    TextKey: 
-    Choices:
-    - TextKey: choice
-      NextNodeId: aa033ad2-6465-4b41-98b7-0fdb85d6cd8d
-      Conditions:
-      - StandardCondition: 0
-        CustomConditionId: 
-        Args:
-        - 
-      Actions: []
-    - TextKey: choice
-      NextNodeId: 
-      Conditions: []
-      Actions: []
-    NextNodeId: 
   - Guid: aa033ad2-6465-4b41-98b7-0fdb85d6cd8d
     Position: {x: 643, y: -16}
     SpeakerId: Lanista
@@ -43,4 +25,10 @@ MonoBehaviour:
     TextKey: Lanista_talk0_2
     Choices: []
     NextNodeId: 
+  - Guid: 46b407bb-1832-4839-965e-59b93d7f9521
+    Position: {x: 167, y: -16}
+    SpeakerId: Augustus
+    TextKey: Augustus_greeting1
+    Choices: []
+    NextNodeId: aa033ad2-6465-4b41-98b7-0fdb85d6cd8d
   startNodeId: 46b407bb-1832-4839-965e-59b93d7f9521
