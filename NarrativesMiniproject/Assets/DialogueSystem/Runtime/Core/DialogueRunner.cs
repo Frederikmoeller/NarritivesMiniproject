@@ -35,14 +35,48 @@ namespace DialogueSystem
         {
             OnLineDisplayed?.Invoke(_currentNode);
 
-            if (_currentNode.Choices != null && _currentNode.Choices.Length > 0)
+            if (_currentNode.Choices is { Length: > 0 })
             {
                 OnChoicesDisplayed?.Invoke(GetValidChoices(_currentNode));
             }
         }
 
+        public void Continue()
+        {
+            if (_currentNode == null || _asset == null)
+            {
+                OnDialogueEnd?.Invoke();
+                return;
+            }
+
+            // If there are choices, don't auto-continue
+            if (_currentNode.Choices is { Length: > 0 })
+            {
+                return;
+            }
+
+            // Move to next node if specified
+            if (!string.IsNullOrEmpty(_currentNode.NextNodeId))
+            {
+                Debug.Log(_currentNode.TextKey);
+                _currentNode = FindNode(_currentNode.NextNodeId);
+                Debug.Log(_currentNode.TextKey);
+                DisplayNode();
+            }
+            else
+            {
+                OnDialogueEnd?.Invoke();
+            }
+        }
+
         public void Choose(int index)
         {
+            if (_currentNode == null || _currentNode.Choices == null || index < 0 || index >= _currentNode.Choices.Length)
+            {
+                Debug.LogError("Invalid choice index");
+                return;
+            }
+            
             var choice = _currentNode.Choices[index];
             if (_asset != null)
             {
@@ -54,7 +88,16 @@ namespace DialogueSystem
             CheckForEndOrContinue();
         }
 
-        DialogueLine FindNode(string id) => _asset.nodes.Find(n => n.NextNodeId == id || n.SpeakerId == id || n.Guid == id);
+        DialogueLine FindNode(string id)
+        {
+            if (string.IsNullOrEmpty(id) || _asset == null || _asset.nodes == null)
+                return null;
+    
+            // Always search by primary ID first
+            var node = _asset.nodes.Find(n => n.Guid == id);
+
+            return node;
+        }
 
         List<DialogueChoice> GetValidChoices(DialogueLine line) =>
             line.Choices.Where(c => AreConditionsMet(c.Conditions)).ToList();
@@ -78,7 +121,7 @@ namespace DialogueSystem
             }
         }
 
-        void CheckForEndOrContinue()
+        public void CheckForEndOrContinue()
         {
             if (_currentNode == null)
             {
@@ -116,5 +159,10 @@ namespace DialogueSystem
                 DisplayNode();
             }
         }
+        
+        // Helper methods for external access
+        public bool IsDialogueActive => _currentNode != null;
+        public string GetCurrentSpeaker => _currentNode?.SpeakerId;
+        public DialogueLine GetCurrentNode => _currentNode;
     }
 }

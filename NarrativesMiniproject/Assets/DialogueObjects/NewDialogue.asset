@@ -13,16 +13,10 @@ MonoBehaviour:
   m_Name: NewDialogue
   m_EditorClassIdentifier: 
   nodes:
-  - Guid: aa033ad2-6465-4b41-98b7-0fdb85d6cd8d
-    Position: {x: 643, y: -16}
-    SpeakerId: Lanista
-    TextKey: Lanista_talk0_1
-    Choices: []
-    NextNodeId: 8cae9e1e-69e2-499d-8c71-6590d8c2ab2b
   - Guid: 8cae9e1e-69e2-499d-8c71-6590d8c2ab2b
     Position: {x: 866, y: -16}
-    SpeakerId: 
-    TextKey: Lanista_talk0_2
+    SpeakerId: Augustus
+    TextKey: Augustus_greeting3
     Choices: []
     NextNodeId: 
   - Guid: 46b407bb-1832-4839-965e-59b93d7f9521
@@ -31,4 +25,29 @@ MonoBehaviour:
     TextKey: Augustus_greeting1
     Choices: []
     NextNodeId: aa033ad2-6465-4b41-98b7-0fdb85d6cd8d
+  - Guid: aa033ad2-6465-4b41-98b7-0fdb85d6cd8d
+    Position: {x: 493, y: -16}
+    SpeakerId: Augustus
+    TextKey: Augustus_greeting2
+    Choices: []
+    NextNodeId: 8cae9e1e-69e2-499d-8c71-6590d8c2ab2b
   startNodeId: 46b407bb-1832-4839-965e-59b93d7f9521
+  onDialogueEnd:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 1
+  endSceneName: Arena1
+  nextDialogue: {fileID: 0}
+  giveControlBack: 1
+  cutsceneToPlay: 

@@ -10,17 +10,20 @@ namespace DialogueSystem.UI
         [SerializeField] private float charactersPerSecond = 50f;
         [SerializeField] private float startDelay = 0.1f;
         [SerializeField] private bool pauseOnPunctuation = true;
+        [SerializeField] private float punctuationPauseMultiplier = 3f;
         
         [Header("Audio")]
+        [SerializeField] private bool useAudio = true;
         [SerializeField] private AudioSource audioSource;
         [SerializeField] private AudioClip typeSound;
         [SerializeField] private float soundVolume = 0.5f;
-        
-        [Header("Rich Text")]
-        [SerializeField] private bool preserveRichTextTags = true;
+        [SerializeField] private float minPitch = 0.9f;
+        [SerializeField] private float maxPitch = 1.1f;
         
         private TMP_Text _textComponent;
         private Coroutine _typewriterCoroutine;
+
+        private string _currentText;
         
         // Events
         public System.Action OnCharacterTyped;
@@ -32,18 +35,24 @@ namespace DialogueSystem.UI
         {
             _textComponent = GetComponent<TMP_Text>();
             
-            if (audioSource == null)
+            if (useAudio && audioSource == null)
+            {
                 audioSource = GetComponent<AudioSource>();
+                if (audioSource == null)
+                    audioSource = gameObject.AddComponent<AudioSource>();
+            }
         }
         
         public void StartTyping(string text, float speedOverride = -1f)
         {
             if (_typewriterCoroutine != null)
                 StopCoroutine(_typewriterCoroutine);
+
+            _currentText = text;
                 
-            _textComponent.text = text;
-            _textComponent.maxVisibleCharacters = 0;
-            
+            _textComponent.text = "";
+            _textComponent.ForceMeshUpdate();
+
             float speed = speedOverride > 0 ? speedOverride : charactersPerSecond;
             _typewriterCoroutine = StartCoroutine(TypeTextRoutine(text, speed));
         }
@@ -54,54 +63,41 @@ namespace DialogueSystem.UI
             {
                 StopCoroutine(_typewriterCoroutine);
                 _typewriterCoroutine = null;
+                _textComponent.text = _currentText;
             }
             
-            _textComponent.maxVisibleCharacters = _textComponent.textInfo.characterCount;
             OnTypingCompleted?.Invoke();
         }
         
         private IEnumerator TypeTextRoutine(string text, float speed)
         {
-            _textComponent.ForceMeshUpdate();
-            
             yield return new WaitForSeconds(startDelay);
             
-            int totalCharacters = _textComponent.textInfo.characterCount;
             float delay = 1f / speed;
-            int visibleCount = 0;
             
-            while (visibleCount < totalCharacters)
+            for (int i = 0; i < text.Length; i++)
             {
-                var charInfo = _textComponent.textInfo.characterInfo[visibleCount];
+                // Add the next character
+                _textComponent.text += text[i];
+                _textComponent.ForceMeshUpdate();
+        
+                OnCharacterTyped?.Invoke();
                 
-                // Skip invisible characters and rich text tags
-                if (charInfo.isVisible)
+                // Play sound if enabled
+                if (useAudio && typeSound != null && audioSource != null)
                 {
-                    visibleCount++;
-                    _textComponent.maxVisibleCharacters = visibleCount;
-                    
-                    // Play sound
-                    if (typeSound != null && audioSource != null)
-                    {
-                        audioSource.PlayOneShot(typeSound, soundVolume);
-                    }
-                    
-                    OnCharacterTyped?.Invoke();
-                    
-                    // Additional pause for punctuation
-                    if (pauseOnPunctuation && IsPunctuation(charInfo.character))
-                    {
-                        yield return new WaitForSeconds(delay * 3f);
-                    }
-                    else
-                    {
-                        yield return new WaitForSeconds(delay);
-                    }
+                    audioSource.pitch = Random.Range(minPitch, maxPitch);
+                    audioSource.PlayOneShot(typeSound, soundVolume);
                 }
-                else
+        
+                // Calculate pause for current character
+                float currentDelay = delay;
+                if (pauseOnPunctuation && IsPunctuation(text[i]))
                 {
-                    visibleCount++;
+                    currentDelay = delay * punctuationPauseMultiplier;
                 }
+                
+                yield return new WaitForSeconds(currentDelay);
             }
             
             _typewriterCoroutine = null;
@@ -111,6 +107,16 @@ namespace DialogueSystem.UI
         private bool IsPunctuation(char character)
         {
             return character == '.' || character == '!' || character == '?' || character == ',';
+        }
+        
+        // Public method to stop typing without triggering completion event
+        public void Stop()
+        {
+            if (_typewriterCoroutine != null)
+            {
+                StopCoroutine(_typewriterCoroutine);
+                _typewriterCoroutine = null;
+            }
         }
     }
 }

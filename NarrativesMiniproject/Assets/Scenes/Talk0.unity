@@ -997,15 +997,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e15b30efebc9ff41958c52ab85dcf65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartAsset: {fileID: 11400000, guid: d701ea81182640d4e9d72f66a1a82f5b, type: 2}
   Ui: {fileID: 1161232735}
-  _runner:
-    rid: -2
-  references:
-    version: 2
-    RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
+  Language: English
+  onDialogueEnded:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  StartAsset: {fileID: 11400000, guid: d701ea81182640d4e9d72f66a1a82f5b, type: 2}
 --- !u!114 &1161232732
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1021,10 +1030,13 @@ MonoBehaviour:
   charactersPerSecond: 50
   startDelay: 0.1
   pauseOnPunctuation: 1
+  punctuationPauseMultiplier: 3
+  useAudio: 1
   audioSource: {fileID: 0}
   typeSound: {fileID: 0}
   soundVolume: 0.5
-  preserveRichTextTags: 0
+  minPitch: 0.9
+  maxPitch: 1.1
 --- !u!114 &1161232733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1045,7 +1057,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: DialogueDialogueDialogueDialogueDialogueDialogueDialogueDialogueDialogue
+  m_text: It seems I have underestimated your fighting capabilities. You did very
+    good for someone who usually helps people. Have you always wanted to kill your
+    patients the same way you did to these gladiators?
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1072,8 +1086,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
-  m_fontSizeBase: 20
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 0
@@ -1136,8 +1150,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3493df6b8b8f6e948bd5713d1eb4a50c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 1161232733}
+  dialogueText: {fileID: 1161232733}
   choicesContainer: {fileID: 0}
+  continueIndicator: {fileID: 0}
+  useTypewriterEffect: 1
+  typewriterEffect: {fileID: 1161232732}
 --- !u!1 &1218997171
 GameObject:
   m_ObjectHideFlags: 0

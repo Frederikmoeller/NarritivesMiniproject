@@ -56,7 +56,7 @@ namespace DialogueSystem.Localization
 
                     if (langIndex + 1 < cols.Length)
                     {
-                        db.data[key][lang] = cols[langIndex + 1].Trim();
+                        db.data[key][lang] = cols[langIndex + 1];
                     }
                     else
                     {
@@ -82,6 +82,7 @@ namespace DialogueSystem.Localization
                 else if (line[i] == ',' && !inQuotes)
                 {
                     result.Add(UnescapedCSVField(line.Substring(start, i - start)));
+                    start = i + 1;
                 }
             }
             
@@ -92,11 +93,10 @@ namespace DialogueSystem.Localization
         }
 
         private string UnescapedCSVField(string field)
-        {
+        { 
             field = field.Trim();
-            
             // Remove Surrounding quotes and handle escaped quotes
-            if (field.StartsWith("\"") && field.EndsWith("\""))
+            if (field.Length >= 2 && field.StartsWith("\"") && field.EndsWith("\""))
             {
                 field = field.Substring(1, field.Length - 2);
                 field = field.Replace("\"\"", "\"");

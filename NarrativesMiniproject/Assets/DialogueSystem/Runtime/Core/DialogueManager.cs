@@ -2,29 +2,128 @@ using DialogueSystem.UI;
 using DialogueSystem.Data;
 using DialogueSystem.Localization;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 namespace DialogueSystem
 {
     public class DialogueManager : MonoBehaviour
     {
-        public DialogueAsset StartAsset;
+        [Header("UI Reference")]
         public DialogueUI Ui;
-
-        [SerializeReference] private DialogueRunner _runner;
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
+        public string Language = "English";
+        
+        [Header("Events")]
+        public UnityEvent<DialogueAsset> onDialogueEnded;
+        
+        [Header("Start Settings")]
+        public DialogueAsset StartAsset;
+        
+        private DialogueRunner _runner;
+        private bool _isDialogueActive = false;
+        private DialogueAsset _currentAsset;
+        
         void Start()
         {
             LocalizationSystem.Load("Dialogue.csv");
-            LocalizationSystem.SetLanguage("English");
+            LocalizationSystem.SetLanguage(Language);
+            
             _runner = new DialogueRunner();
             _runner.OnLineDisplayed += Ui.ShowLine;
             _runner.OnChoicesDisplayed += Ui.ShowChoices;
-            _runner.OnDialogueEnd += Ui.HideAll;
+            _runner.OnDialogueEnd += OnDialogueEnd; // Changed from Ui.EndDialogue
+        }
+        
+        void Update()
+        {
+            if (!_isDialogueActive) return;
+            
+            if (ShouldContinueInput())
+            {
+                if (Ui.IsTyping())
+                {
+                    Ui.SkipTyping();
+                }
+                else
+                {
+                    ContinueDialogue();
+                }
+            }
+        }
+        
+        public void StartDialogue(DialogueAsset asset, bool useSavedState = true)
+        {
+            if (asset == null)
+            {
+                Debug.LogError("DialogueManager: Cannot start dialogue - asset is null!");
+                return;
+            }
+            
+            _isDialogueActive = true;
+            _currentAsset = asset;
+            _runner.StartDialogue(asset, useSavedState);
         }
         
         public void StartDialogue(bool useSavedState = true)
         {
-            _runner.StartDialogue(StartAsset, useSavedState);
+            if (StartAsset == null)
+            {
+                Debug.LogError("DialogueManager: Cannot start dialogue - StartAsset is null!");
+                return;
+            }
+            
+            StartDialogue(StartAsset, useSavedState);
         }
+        
+        public void ContinueDialogue()
+        {
+            if (_runner != null)
+            {
+                _runner.Continue();
+            }
+        }
+        
+        protected virtual bool ShouldContinueInput()
+        {
+            return Input.GetKeyDown(KeyCode.Space) || 
+                   Input.GetKeyDown(KeyCode.Return) || 
+                   Input.GetMouseButtonDown(0);
+        }
+        
+        private void OnDialogueEnd()
+        {
+            _isDialogueActive = false;
+    
+            if (Ui != null)
+                Ui.HideAll();
+    
+            // Let the asset handle its own ending
+            if (_currentAsset != null)
+            {
+                _currentAsset.onDialogueEnd?.Invoke();
+        
+                // OR handle specific fields
+                //if (_currentAsset.giveControlBack)
+                    //PlayerController.Instance.EnableControl();
+            
+                /*if (!string.IsNullOrEmpty(_currentAsset.cutsceneToPlay))
+                    CutsceneManager.Play(_currentAsset.cutsceneToPlay);*/
+            
+                if (!string.IsNullOrEmpty(_currentAsset.endSceneName))
+                    SceneManager.LoadScene(_currentAsset.endSceneName);
+            }
+    
+            // Still fire the generic event for other listeners
+            onDialogueEnded?.Invoke(_currentAsset);
+    
+            _currentAsset = null;
+        }
+        public DialogueRunner GetRunner()
+        {
+            return _runner;
+        }
+        
+        // Helper property
+        public bool IsDialogueActive => _isDialogueActive;
     }
 }
