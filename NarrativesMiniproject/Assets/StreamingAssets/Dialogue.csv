@@ -19,16 +19,16 @@ Augustus_postfight2_5,"But, to respect you for your effort in the past fights, I
 Augustus_postfight2_6,"You can choose to continue this gladiator path, earn your fame, empress the Emperor and the audience."
 Augustus_postfight2_7,"Or, you can go back to being a doctor, go help people the same way you always have."
 Augustus_postfight2_8,I hope you make the correct decision.
+Augustus_postfight2_9,Change your weapon mid-fight using button 1 and 2. Good luck, doctor.
 Weaponchoice_axe,Continue as a gladiator and fight for your life
 Weaponchoice_stethoscope,Go back to being a doctor and help those in need
 Augustus_weaponchoice_axe,I knew you had it in you! Good luck tomorrow. Empress the emperor until your dying breath!
 Augustus_weaponchoice_stethoscope,I understand. I hope you don't regret it.
 Augustus_axe_ending,"Greetings, warrior."
-Dialogue_stethoscope_ending1,Silence spread through the arena.
-Dialogue_stethoscope_ending2,Eyes were fixed on the warrior wielding a peculiar tool.
-Dialogue_stethoscope_ending3,"The warriors, confused, staring at you."
-Dialogue_stethoscope_ending4,"The emperor, furious, holding his gaze on you."
-Dialogue_stethoscope_ending5,"Your actions may have been in good faith, but it was not the Roman way."
-Dialogue_stethoscope_ending6,You have truly beaten my expectations. Doctor.
-Dialogue_stethoscope_ending7,I hoped that we could meet again. But that is practically impossible.
-Dialogue_stethoscope_ending8,"Rest in peace, Doctor."
+Dialogue_stethoscope_ending1,"Greetings, doctor."
+Dialogue_stethoscope_ending2,I have truly underestimated you. And you have shocked everyone in Rome.
+Dialogue_stethoscope_ending3,The emperor seems to be very furious. And he wants to talk to me about you.
+Dialogue_stethoscope_ending4,I do not know what he will want from me. But I do not imagine its good.
+Dialogue_stethoscope_ending5,"This may be the last time we meet, but I am happy to have met you."
+Dialogue_stethoscope_ending6,You have truly beaten my expectations.
+Dialogue_stethoscope_ending7,"Farewell, doctor."

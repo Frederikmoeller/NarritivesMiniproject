@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79f3c97ce4782074599854fc480ffa18, type: 3}
+  m_Name: Post Fight 1
+  m_EditorClassIdentifier: 
+  nodes:
+  - Guid: f3e1d523-093f-4ef3-bdef-c9b6ad4b5777
+    Position: {x: 174, y: 10}
+    SpeakerId: augustus
+    TextKey: Augustus_postfight1_1
+    Choices: []
+    NextNodeId: 2dc7afe1-7bce-4dd6-9208-f8de989cd48e
+  - Guid: 2dc7afe1-7bce-4dd6-9208-f8de989cd48e
+    Position: {x: 474, y: 10}
+    SpeakerId: 
+    TextKey: Augustus_postfight1_2
+    Choices: []
+    NextNodeId: 20081724-635a-44ff-af57-1e31f38b7bab
+  - Guid: 20081724-635a-44ff-af57-1e31f38b7bab
+    Position: {x: 762, y: 10}
+    SpeakerId: 
+    TextKey: Augustus_postfight1_3
+    Choices: []
+    NextNodeId: 6ae9b697-ed49-4a1f-af11-e034ebbbb504
+  - Guid: 6ae9b697-ed49-4a1f-af11-e034ebbbb504
+    Position: {x: 1062, y: 10}
+    SpeakerId: 
+    TextKey: Augustus_postfight1_4
+    Choices: []
+    NextNodeId: d8866523-b247-4e44-90f3-3cfcc3073a16
+  - Guid: d8866523-b247-4e44-90f3-3cfcc3073a16
+    Position: {x: 1364, y: 10}
+    SpeakerId: 
+    TextKey: Augustus_postfight1_5
+    Choices: []
+    NextNodeId: 
+  startNodeId: f3e1d523-093f-4ef3-bdef-c9b6ad4b5777
+  onDialogueEnd:
+    m_PersistentCalls:
+      m_Calls: []
+  endSceneName: Arena2
+  nextDialogue: {fileID: 0}
+  giveControlBack: 1
+  cutsceneToPlay: 

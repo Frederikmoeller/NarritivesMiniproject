@@ -102,9 +102,7 @@ namespace DialogueSystem
             {
                 _currentAsset.onDialogueEnd?.Invoke();
         
-                // OR handle specific fields
-                //if (_currentAsset.giveControlBack)
-                    //PlayerController.Instance.EnableControl();
+                
             
                 /*if (!string.IsNullOrEmpty(_currentAsset.cutsceneToPlay))
                     CutsceneManager.Play(_currentAsset.cutsceneToPlay);*/

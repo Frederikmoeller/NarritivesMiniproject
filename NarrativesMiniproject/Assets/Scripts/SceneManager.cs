@@ -44,6 +44,7 @@ public class ArenaSceneManager : MonoBehaviour
             if (fighters.All(f => f.isDead))
             {
                 outcomeTriggered = true;
+                print(nextSceneName);
                 SceneManager.LoadScene(nextSceneName);
             }
             return;
@@ -66,7 +67,7 @@ foreach (var f in fighters)
     // - must have died at least once
     // - must be alive now
     // - must be fully healed
-    if (!f.hasDiedOnce) allHealed = false;
+    if (!f.hasBeenHealed) allHealed = false;
     if (f.isDead)       allHealed = false;
     if (f.health < 100) allHealed = false;
 }
@@ -77,7 +78,7 @@ if (allDead)
     outcomeTriggered = true;
     ArenaResult.Instance.allKilled = true;
     ArenaResult.Instance.allHealed = false;
-    SceneManager.LoadScene(nextSceneName);
+    SceneManager.LoadScene("Talk 4");
     return;
 }
 
@@ -87,7 +88,7 @@ if (allHealed)
     outcomeTriggered = true;
     ArenaResult.Instance.allKilled = false;
     ArenaResult.Instance.allHealed = true;
-    SceneManager.LoadScene(nextSceneName);
+    SceneManager.LoadScene("Talk 3");
     return;
 }
 

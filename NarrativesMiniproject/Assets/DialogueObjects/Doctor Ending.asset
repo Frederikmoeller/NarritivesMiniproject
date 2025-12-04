@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79f3c97ce4782074599854fc480ffa18, type: 3}
+  m_Name: Doctor Ending
+  m_EditorClassIdentifier: 
+  nodes:
+  - Guid: a06e43f1-279f-445c-8a96-cf6d008e2f56
+    Position: {x: 94, y: 10}
+    SpeakerId: 
+    TextKey: Dialogue_stethoscope_ending1
+    Choices: []
+    NextNodeId: a688a083-8485-4ce4-b33f-bcfbb0dc67d8
+  - Guid: a688a083-8485-4ce4-b33f-bcfbb0dc67d8
+    Position: {x: 401, y: 10}
+    SpeakerId: 
+    TextKey: Dialogue_stethoscope_ending2
+    Choices: []
+    NextNodeId: 6ea33284-39f1-4b78-84e3-2e61d6376d89
+  - Guid: 6ea33284-39f1-4b78-84e3-2e61d6376d89
+    Position: {x: 710, y: 10}
+    SpeakerId: 
+    TextKey: Dialogue_stethoscope_ending3
+    Choices: []
+    NextNodeId: 12cafcc6-9970-4a3b-8642-2ee9d515eed3
+  - Guid: 12cafcc6-9970-4a3b-8642-2ee9d515eed3
+    Position: {x: 1019, y: 10}
+    SpeakerId: 
+    TextKey: Dialogue_stethoscope_ending4
+    Choices: []
+    NextNodeId: 137c7610-1737-4855-8237-f29f1418c74e
+  - Guid: 137c7610-1737-4855-8237-f29f1418c74e
+    Position: {x: 1328, y: 10}
+    SpeakerId: 
+    TextKey: Dialogue_stethoscope_ending5
+    Choices: []
+    NextNodeId: aa9f73f9-65b7-4e65-bc41-3ad8794c791a
+  - Guid: aa9f73f9-65b7-4e65-bc41-3ad8794c791a
+    Position: {x: 1637, y: 10}
+    SpeakerId: 
+    TextKey: Dialogue_stethoscope_ending6
+    Choices: []
+    NextNodeId: c209d4d8-532d-4028-ac2d-a1f299a1d96d
+  - Guid: c209d4d8-532d-4028-ac2d-a1f299a1d96d
+    Position: {x: 1946, y: 10}
+    SpeakerId: 
+    TextKey: Dialogue_stethoscope_ending7
+    Choices: []
+    NextNodeId: 
+  startNodeId: a06e43f1-279f-445c-8a96-cf6d008e2f56
+  onDialogueEnd:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  endSceneName: 
+  nextDialogue: {fileID: 0}
+  giveControlBack: 1
+  cutsceneToPlay: 

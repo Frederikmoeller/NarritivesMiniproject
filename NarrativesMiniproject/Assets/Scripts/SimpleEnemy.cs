@@ -12,7 +12,7 @@ public class SimpleEnemy : MonoBehaviour
     public float attackCooldown = 2f;
     public float hitCooldown = 0.5f;
     float damageLockoutUntil = 0f;
-    public bool hasDiedOnce = false;
+    public bool hasBeenHealed = false;
 
 
     [Header("Refs")]
@@ -169,9 +169,6 @@ public void TakeDamage(float dmg)
         health = 0f;
         isDead = true;
 
-        // Mark that this enemy has died at least once
-        hasDiedOnce = true;
-
         DoDeathSequence();
         return;
     }
@@ -212,7 +209,7 @@ void DieOnce()
 {
     if (isDead) return;
     isDead = true;
-    hasDiedOnce = true;       
+    //hasDiedOnce = true;       
     DoDeathSequence();
 }
 
@@ -220,15 +217,13 @@ void ForceDie()
 {
     if (isDead) return;
     isDead = true;
-    hasDiedOnce = true;      
+    //hasDiedOnce = true;      
     DoDeathSequence();
 }
 
 
     public void Heal(float amount)
     {
-        if (!isDead) return;
-
         health += amount;
         if (health > 100f) health = 100f;
 
@@ -237,6 +232,7 @@ void ForceDie()
             isDead = false;
             state = State.Aggro;
             fakeFighter = false;
+            hasBeenHealed = true;
 
             animator.ResetTrigger("die");
             animator.SetTrigger("revive");
